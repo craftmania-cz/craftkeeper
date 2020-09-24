@@ -1,4 +1,4 @@
-package cz.craftmania.template;
+package cz.craftmania.craftkeeper;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -8,9 +8,9 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         // Instance
         instance = this;
+
     }
 
     @Override
