@@ -1,0 +1,5 @@
+name: GradleTemplate
+version: 1.0.0
+description: Template for Gradle plugins
+author: MrWakeCZ
+main: cz.craftmania.template.Main

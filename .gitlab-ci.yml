@@ -1,0 +1,37 @@
+image: java:8-jdk
+
+stages:
+- validate
+- build
+#- review
+#- pages
+#- deploy
+
+before_script:
+#  - echo `pwd` # debug
+#  - echo "$CI_BUILD_NAME, $CI_BUILD_REF_NAME $CI_BUILD_STAGE" # debug
+- export GRADLE_USER_HOME=`pwd`/.gradle
+- rm -f  .gradle/caches/modules-2/modules-2.lock
+- rm -fr .gradle/caches/*/plugin-resolution/
+
+# Cache downloaded dependencies and plugins between builds.
+cache:
+  paths:
+  - .gradle/wrapper
+  - .gradle/caches
+  - target/
+
+validate:
+  stage: validate
+  script:
+  - ./gradlew check
+
+build:
+  stage: build
+  script:
+  - ./gradlew clean
+  - ./gradlew compilePlugin
+  artifacts:
+    expire_in: 1 week
+    paths:
+    - target/*.jar
