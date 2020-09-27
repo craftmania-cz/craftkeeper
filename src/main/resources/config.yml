@@ -1,1 +1,25 @@
 # Config CraftKeeperu
+
+# Napojení na SQL
+sql:
+  hostname: host
+  port: 3306
+  database: database
+  username: user
+  password: password
+
+# Nastavení SQL
+settings:
+  minimumConnections: 2
+  maximumConnections: 5
+  timout: 30000
+
+# Integrace a zasílání exceptions na Sentry
+sentry-dsn: ''
+
+# CraftKeeper related nastaveni
+
+debug: true
+
+## Bude logovat SQL věci
+debugSQL: true
