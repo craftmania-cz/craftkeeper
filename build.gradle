@@ -30,6 +30,8 @@ repositories {
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url "http://repo.md-5.net/content/repositories/snapshots/" }
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -51,6 +53,9 @@ dependencies {
 
     // PlaceholderAPI
     compileOnly group: 'me.clip', name: 'placeholderapi', version: '2.10.4'
+
+    // Vault
+    implementation 'com.github.MilkBowl:VaultAPI:1.7'
 
     // Others
     compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.4'

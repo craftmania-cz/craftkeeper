@@ -23,3 +23,6 @@ debug: true
 
 ## Bude logovat SQL věci
 debugSQL: true
+
+## Permission node, přes jaký bude CraftKeeper kontrolovat rank; x = číslo ranku
+permissionRankNode: craftprison.rank.x

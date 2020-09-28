@@ -1,10 +1,17 @@
 package cz.craftmania.craftkeeper;
 
+import co.aikar.commands.PaperCommandManager;
+import cz.craftmania.craftkeeper.commands.SellallCommand;
+import cz.craftmania.craftkeeper.listeners.PlayerListener;
+import cz.craftmania.craftkeeper.managers.KeeperManager;
+import cz.craftmania.craftkeeper.managers.SellManager;
 import cz.craftmania.craftkeeper.sql.SQLManager;
 import cz.craftmania.craftkeeper.utils.Logger;
+import cz.craftmania.craftkeeper.utils.configs.Config;
 import cz.craftmania.craftkeeper.utils.configs.ConfigAPI;
 import cz.craftmania.craftlibs.sentry.CraftSentry;
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,14 +25,18 @@ public class Main extends JavaPlugin {
 
     // ConfigAPI
     private @Getter static ConfigAPI configAPI;
-
+    // CraftKeeper
+    private @Getter static KeeperManager keeperManager;
+    private @Getter static SellManager sellManager;
+    // Economy
+    private @Getter static Economy vaultEconomy;
     // Debug
-    private @Getter boolean debug = false;
+    private @Getter boolean debug = true;
     private @Getter boolean debugSQL = false;
-
     // SQL
     private @Getter SQLManager sqlManager;
-
+    // Commands
+    private PaperCommandManager commandManager;
     // Sentry
     private CraftSentry sentry = null;
 
@@ -53,6 +64,15 @@ public class Main extends JavaPlugin {
         // HikariCP - SQL
         initDatabase();
 
+        // Managers
+        Logger.info("Načítám managery!");
+        keeperManager = new KeeperManager();
+        sellManager = new SellManager();
+
+        // Economy
+        Logger.info("Probíhá načítání ekonomiky!");
+        vaultEconomy = cz.craftmania.crafteconomy.Main.getVaultEconomy();
+
         // PlaceholderAPI
         Logger.info("Registruji PlaceholderAPI CraftRoleplay extension!");
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -65,6 +85,8 @@ public class Main extends JavaPlugin {
 
         // Commands
         Logger.info("Probíhá registrace příkazů pomocí Aikar commands!");
+        commandManager = new PaperCommandManager(this);
+        commandManager.enableUnstableAPI("help");
         loadCommands();
 
         Logger.info("Načítání dokončeno! (Zabralo to " + (System.currentTimeMillis() - start) + "ms)");
@@ -76,16 +98,18 @@ public class Main extends JavaPlugin {
     }
 
     private void loadConfiguration() {
-
+        Config sellPrices = new Config(Main.getConfigAPI(), "sellprices");
+        Main.getConfigAPI().registerConfig(sellPrices);
     }
 
     private void loadEvents() {
         PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PlayerListener(), this);
 
     }
 
     private void loadCommands() {
-
+        commandManager.registerCommand(new SellallCommand());
     }
 
     private void initDatabase() {

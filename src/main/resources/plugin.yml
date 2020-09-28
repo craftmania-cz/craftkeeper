@@ -1,5 +1,7 @@
 name: CraftKeeper
 version: 0.0.1
 description: Autosell plugin pro Prison server
+depend:
+  - "CraftEconomy"
 author: lilmayu
 main: cz.craftmania.craftkeeper.Main

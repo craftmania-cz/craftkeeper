@@ -14,9 +14,9 @@ import java.util.Set;
 
 public class Config {
 
+    protected ConfigAPI configAPI;
     private File configFile;
     private YamlConfiguration config;
-    protected ConfigAPI configAPI;
     private String name;
     private String defaultPath;
     private String defaultName;
