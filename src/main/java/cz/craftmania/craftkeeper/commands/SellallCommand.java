@@ -62,6 +62,15 @@ public class SellallCommand extends BaseCommand {
             Logger.danger("Konzole nic neprodá.");
     }
 
+    @Subcommand("reload")
+    @CommandAlias("sr")
+    public void reloadPrices(CommandSender sender) {
+        if (sender instanceof Player) {
+            ChatInfo.info((Player) sender, "Reloaduji ceny...");
+        }
+        Main.getSellManager().reloadPrices();
+    }
+
     @Subcommand("debug")
     @CommandAlias("sdeb")
     public void debugCommand(CommandSender sender) {

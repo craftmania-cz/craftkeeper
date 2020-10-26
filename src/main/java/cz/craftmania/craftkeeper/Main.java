@@ -1,10 +1,13 @@
 package cz.craftmania.craftkeeper;
 
 import co.aikar.commands.PaperCommandManager;
+import cz.craftmania.craftkeeper.commands.AutosellCommand;
 import cz.craftmania.craftkeeper.commands.SellallCommand;
 import cz.craftmania.craftkeeper.listeners.PlayerListener;
+import cz.craftmania.craftkeeper.managers.AutosellManager;
 import cz.craftmania.craftkeeper.managers.KeeperManager;
 import cz.craftmania.craftkeeper.managers.SellManager;
+import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.sql.SQLManager;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.configs.Config;
@@ -15,6 +18,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
@@ -28,11 +32,13 @@ public class Main extends JavaPlugin {
     // CraftKeeper
     private @Getter static KeeperManager keeperManager;
     private @Getter static SellManager sellManager;
+    private @Getter static AutosellManager autosellManager;
     // Economy
     private @Getter static Economy vaultEconomy;
     // Debug
     private @Getter boolean debug = true;
     private @Getter boolean debugSQL = false;
+    private @Getter boolean debugBlockBreak = false;
     // SQL
     private @Getter SQLManager sqlManager;
     // Commands
@@ -68,6 +74,7 @@ public class Main extends JavaPlugin {
         Logger.info("Načítám managery!");
         keeperManager = new KeeperManager();
         sellManager = new SellManager();
+        autosellManager = new AutosellManager();
 
         // Economy
         Logger.info("Probíhá načítání ekonomiky!");
@@ -80,14 +87,17 @@ public class Main extends JavaPlugin {
         }
 
         // Bukkit events
-        Logger.info("Probíhá registrace eventů!");
-        loadEvents();
+        Logger.info("Probíhá registrace listenerů!");
+        loadListeners();
 
         // Commands
         Logger.info("Probíhá registrace příkazů pomocí Aikar commands!");
         commandManager = new PaperCommandManager(this);
         commandManager.enableUnstableAPI("help");
         loadCommands();
+
+        Logger.info("Probíhá registrace runnablů!");
+        loadRunnables();
 
         Logger.info("Načítání dokončeno! (Zabralo to " + (System.currentTimeMillis() - start) + "ms)");
     }
@@ -100,16 +110,35 @@ public class Main extends JavaPlugin {
     private void loadConfiguration() {
         Config sellPrices = new Config(Main.getConfigAPI(), "sellprices");
         Main.getConfigAPI().registerConfig(sellPrices);
+
+       debug = getConfig().getBoolean("debug");
+       debugSQL = getConfig().getBoolean("debugSQL");
+       debugBlockBreak = getConfig().getBoolean("debugBlockBreak");
     }
 
-    private void loadEvents() {
+    private void loadListeners() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerListener(), this);
-
+        autosellManager.registerBlockBreakEvent();
     }
 
     private void loadCommands() {
         commandManager.registerCommand(new SellallCommand());
+        commandManager.registerCommand(new AutosellCommand());
+    }
+
+    private void loadRunnables() {
+        // Autosell runnable
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Logger.debug("Running autosell checker runnable...");
+                for (KeeperPlayer keeperPlayer : Main.getKeeperManager().getKeeperPlayers()) {
+                    keeperPlayer.updateVaultBalance();
+                    Logger.debug("Updated for '" + keeperPlayer.getPlayer().getName() + "'");
+                }
+            }
+        }.runTaskTimerAsynchronously(this, 20L, 20L * 30); // Každých 30s
     }
 
     private void initDatabase() {

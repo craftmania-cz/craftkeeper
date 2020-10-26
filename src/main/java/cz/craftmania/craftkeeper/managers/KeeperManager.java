@@ -45,6 +45,17 @@ public class KeeperManager {
 
     // Utils
 
+    public void updateKeeperPlayer(KeeperPlayer keeperPlayer) {
+        int counter = 0;
+        for (KeeperPlayer keeperPlayerInList : keeperPlayers) {
+            if (keeperPlayerInList.getPlayer().getUniqueId().equals(keeperPlayer.getPlayer().getUniqueId())) {
+                keeperPlayers.set(counter, keeperPlayer);
+                break;
+            }
+            counter++;
+        }
+    }
+
     public void refreshPermissionNode() {
         String permission = Main.getInstance().getConfig().getString("permissionRankNode");
         if (permission == null) {

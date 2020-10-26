@@ -29,4 +29,9 @@ public class Logger {
         if (Main.getInstance().isDebugSQL())
             Bukkit.getConsoleSender().sendMessage(ChatColor.BLUE + "[CraftKeeper - DEBUGSQL] " + ChatColor.WHITE + s);
     }
+
+    public static void debugBlockBreak(String s) {
+        if (Main.getInstance().isDebugBlockBreak())
+            Bukkit.getConsoleSender().sendMessage(ChatColor.LIGHT_PURPLE + "[CraftKeeper - BLOCKBREAK] " + ChatColor.WHITE + s);
+    }
 }

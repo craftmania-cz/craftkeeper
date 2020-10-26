@@ -26,6 +26,11 @@ public class SellManager {
         reloadPrices();
     }
 
+    public Double getPriceOfItemstackByRank(ItemStack itemStack, Rank rank) {
+        SellPrices sellPrices = Main.getSellManager().getSellPricesByRank(rank);
+        return sellPrices.getPrices().get(itemStack.getType());
+    }
+
     public void sellEverythingByRank(KeeperPlayer keeperPlayer, Rank rank) {
         if (keeperPlayer.getPlayerRank().getWeight() < rank.getWeight()) {
             Logger.danger("Pozor! Hráčovi " + keeperPlayer.getPlayer().getName() + " se prodávají věci pomocí vyššího ranku (" + rank.getName() + ") než má on sám (" + keeperPlayer.getPlayerRank().getName() + ")!");
@@ -63,8 +68,9 @@ public class SellManager {
     public void reloadPrices() {
         Logger.info("Začínám s načítáním prodávajících hodnot materiálů...");
         long start = System.currentTimeMillis();
-        sellPricesList = new ArrayList<>();
+        sellPricesList.clear();
 
+        Main.getConfigAPI().loadConfigs();
         ConfigurationSection config = Main.getConfigAPI().getConfig("sellprices").getConfig().getConfigurationSection("sellPrices");
         if (config == null) {
             Logger.debug("V sellprices.yml neexistuje 'sellPrices'! Hodnoty nebudou načteny.");

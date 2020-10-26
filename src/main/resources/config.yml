@@ -24,5 +24,20 @@ debug: true
 ## Bude logovat SQL věci
 debugSQL: true
 
+## Bude logovat informace o block-breaku
+debugBlockBreak: true
+
 ## Permission node, přes jaký bude CraftKeeper kontrolovat rank; x = číslo ranku
 permissionRankNode: craftprison.rank.x
+
+## MONITOR, HIGHEST, HIGH, NORMAL, LOW, LOWEST
+block-break-event-level: "NORMAL"
+
+## AutoSell related nastavení
+autosell:
+  permission-node: craftprison.autosell
+  do-damage-to-tool: true
+  allow-in-creative: false
+  exp-to-player: true
+  disabled-worlds:
+    - "worldName"
