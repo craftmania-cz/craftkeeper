@@ -26,7 +26,6 @@ public class Main extends JavaPlugin {
 
     // Instance
     private @Getter static Main instance;
-
     // ConfigAPI
     private @Getter static ConfigAPI configAPI;
     // CraftKeeper
@@ -35,16 +34,16 @@ public class Main extends JavaPlugin {
     private @Getter static AutosellManager autosellManager;
     // Economy
     private @Getter static Economy vaultEconomy;
-    // Debug
-    private @Getter boolean debug = true;
-    private @Getter boolean debugSQL = false;
-    private @Getter boolean debugBlockBreak = false;
     // SQL
     private @Getter SQLManager sqlManager;
     // Commands
     private PaperCommandManager commandManager;
     // Sentry
     private CraftSentry sentry = null;
+    // Debug
+    private @Getter boolean debug = true;
+    private @Getter boolean debugSQL = false;
+    private @Getter boolean debugBlockBreak = false;
 
     @Override
     public void onEnable() {
@@ -111,9 +110,9 @@ public class Main extends JavaPlugin {
         Config sellPrices = new Config(Main.getConfigAPI(), "sellprices");
         Main.getConfigAPI().registerConfig(sellPrices);
 
-       debug = getConfig().getBoolean("debug");
-       debugSQL = getConfig().getBoolean("debugSQL");
-       debugBlockBreak = getConfig().getBoolean("debugBlockBreak");
+        debug = getConfig().getBoolean("debug");
+        debugSQL = getConfig().getBoolean("debugSQL");
+        debugBlockBreak = getConfig().getBoolean("debugBlockBreak");
     }
 
     private void loadListeners() {
@@ -129,6 +128,7 @@ public class Main extends JavaPlugin {
 
     private void loadRunnables() {
         // Autosell runnable
+        long updateTime = getConfig().getLong("autosell.update-time");
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -138,7 +138,7 @@ public class Main extends JavaPlugin {
                     Logger.debug("Updated for '" + keeperPlayer.getPlayer().getName() + "'");
                 }
             }
-        }.runTaskTimerAsynchronously(this, 20L, 20L * 30); // Každých 30s
+        }.runTaskTimerAsynchronously(this, 20L, (20 * updateTime) / 1000);
     }
 
     private void initDatabase() {

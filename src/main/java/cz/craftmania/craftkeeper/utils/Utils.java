@@ -19,7 +19,8 @@ public class Utils {
                     int rank = Integer.parseInt(ending);
                     if (rank > maxRank)
                         maxRank = rank;
-                } catch (Exception ignored) {
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                     return null;
                 }
             }

@@ -35,6 +35,16 @@ block-break-event-level: "NORMAL"
 
 ## AutoSell related nastavení
 autosell:
+  ## Čas mezi aktulizacemi, kdy plugin pošle uložené peníze do vaultu
+  update-time: 30000
+  cooldown:
+    enabled: true
+    ## Cooldown před tím, než hráč bude moct použít autosell znovu
+    time: 360000
+  duration:
+    infinite: false
+    ## Čas jak dlouho autosell poběží
+    time: 120000
   permission-node: craftprison.autosell
   do-damage-to-tool: true
   allow-in-creative: false

@@ -24,8 +24,28 @@ public class AutosellCommand extends BaseCommand {
     public void changeAutosellStatus(CommandSender sender) {
         Player player = (Player) sender;
         KeeperPlayer keeperPlayer = Main.getKeeperManager().getKeeperPlayer(player);
-        keeperPlayer.setInAutoSellMode(!keeperPlayer.isInAutoSellMode());
-        ChatInfo.info(player, "Autosell mode set to: " + keeperPlayer.isInAutoSellMode());
+
+        if (!keeperPlayer.canHaveAutosell()) {
+            long cooldownDuration = keeperPlayer.getAutosellCooldownTo();
+            if (cooldownDuration != 0) {
+                // Oznámí že má cooldown
+                ChatInfo.error(player, "Autosell si můžeš zapnout až za §e" + keeperPlayer.getRemainingCooldownInMS() / 1000 + " §csekund!");
+                return;
+            } else {
+                // Vypne autosell
+                keeperPlayer.disableAutosellMode();
+                ChatInfo.info(player, "Vypnul sis Autosell!");
+                return;
+            }
+        }
+        keeperPlayer.enableAutosellMode();
+
+        String message = "Zapnul sis Autosell!";
+        if (!Main.getInstance().getConfig().getBoolean("autosell.duration.infinite")) {
+            long duration = Main.getInstance().getConfig().getLong("autosell.duration.time") / 1000;
+            message += " Autosell bude aktivní §e" + duration + " §asekund!";
+        }
+        ChatInfo.success(player, message);
     }
 
     @Subcommand("debug")
@@ -35,6 +55,9 @@ public class AutosellCommand extends BaseCommand {
         KeeperPlayer keeperPlayer = Main.getKeeperManager().getKeeperPlayer(player);
         ChatInfo.info(player, "Autosell mode: " + keeperPlayer.isInAutoSellMode());
         ChatInfo.info(player, "Your to pay: " + keeperPlayer.getToPayFromAutosell());
+        ChatInfo.info(player, "Remaining duration: " + keeperPlayer.getRemainingDurationInMS());
+        ChatInfo.info(player, "Remaining cooldown: " + keeperPlayer.getRemainingCooldownInMS());
+        ChatInfo.info(player, "Can have autosell: " + keeperPlayer.canHaveAutosell());
         for (KeeperPlayer keeperPlayerInList : Main.getKeeperManager().getKeeperPlayers()) {
             if (keeperPlayerInList.isInAutoSellMode()) {
                 Logger.debug("KeeperPlayer '" + keeperPlayerInList.getPlayer().getName() + "' is in autosell mode.");
