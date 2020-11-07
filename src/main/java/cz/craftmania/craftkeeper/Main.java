@@ -132,10 +132,8 @@ public class Main extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Logger.debug("Running autosell checker runnable...");
                 for (KeeperPlayer keeperPlayer : Main.getKeeperManager().getKeeperPlayers()) {
                     keeperPlayer.updateVaultBalance();
-                    Logger.debug("Updated for '" + keeperPlayer.getPlayer().getName() + "'");
                 }
             }
         }.runTaskTimerAsynchronously(this, 20L, (20 * updateTime) / 1000);

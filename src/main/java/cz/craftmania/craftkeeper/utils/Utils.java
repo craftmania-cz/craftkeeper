@@ -10,21 +10,14 @@ public class Utils {
     public static Rank findPlayersRankByPermission(Player player) {
         String[] preparedPermissionRankNode = Main.getKeeperManager().getPermissionRankNode().split("\\.");
 
-        int maxRank = -2;
+        Rank rank = null;
         for (PermissionAttachmentInfo pio : player.getEffectivePermissions()) {
             String permissionNode = pio.getPermission();
             if (permissionNode.startsWith(preparedPermissionRankNode[0])) {
                 String ending = permissionNode.substring(permissionNode.lastIndexOf('.') + 1);
-                try {
-                    int rank = Integer.parseInt(ending);
-                    if (rank > maxRank)
-                        maxRank = rank;
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                    return null;
-                }
+                rank = Rank.getByName(ending);
             }
         }
-        return Rank.getByWeight(maxRank);
+        return rank;
     }
 }

@@ -27,11 +27,16 @@ debugSQL: true
 ## Bude logovat informace o block-breaku
 debugBlockBreak: true
 
-## Permission node, přes jaký bude CraftKeeper kontrolovat rank; x = číslo ranku
+## Permission node, přes jaký bude CraftKeeper kontrolovat rank; x = písmeno ranku
 permissionRankNode: craftprison.rank.x
 
 ## MONITOR, HIGHEST, HIGH, NORMAL, LOW, LOWEST
 block-break-event-level: "NORMAL"
+
+## True / False
+drops-to-inv: true
+exp-to-player: true
+do-damage-to-tool: true
 
 ## AutoSell related nastavení
 autosell:
@@ -46,8 +51,6 @@ autosell:
     ## Čas jak dlouho autosell poběží
     time: 120000
   permission-node: craftprison.autosell
-  do-damage-to-tool: true
   allow-in-creative: false
-  exp-to-player: true
   disabled-worlds:
     - "worldName"

@@ -2,12 +2,15 @@ package cz.craftmania.craftkeeper.managers;
 
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
+import cz.craftmania.craftkeeper.events.PlayerAutosellGotPaidEvent;
+import cz.craftmania.craftkeeper.events.PlayerSellallEvent;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.Rank;
 import cz.craftmania.craftkeeper.objects.SellPrices;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.ProtectedAsync;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -54,6 +57,13 @@ public class SellManager {
                 return;
             }
             Main.getVaultEconomy().depositPlayer(player, moneyToAdd);
+            Double finalMoneyToAdd = moneyToAdd;
+            Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    Bukkit.getPluginManager().callEvent(new PlayerSellallEvent(keeperPlayer, finalMoneyToAdd));
+                }
+            });
         });
     }
 

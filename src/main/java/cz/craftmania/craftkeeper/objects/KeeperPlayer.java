@@ -1,9 +1,15 @@
 package cz.craftmania.craftkeeper.objects;
 
+import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
+import cz.craftmania.craftkeeper.events.PlayerAutosellCooldownEndEvent;
+import cz.craftmania.craftkeeper.events.PlayerAutosellGotPaidEvent;
+import cz.craftmania.craftkeeper.events.PlayerAutosellStartEvent;
+import cz.craftmania.craftkeeper.events.PlayerAutosellStopEvent;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.Utils;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -47,9 +53,17 @@ public class KeeperPlayer {
 
     public void disableAutosellMode() {
         FileConfiguration config = Main.getInstance().getConfig();
-
+        updateVaultBalance();
+        KeeperPlayer keeperPlayer = this;
         inAutoSellMode = false;
         autosellDurationTo = 0;
+
+        Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.getPluginManager().callEvent(new PlayerAutosellStopEvent(keeperPlayer));
+            }
+        });
 
         boolean cooldownEnabled = config.getBoolean("autosell.cooldown.enabled");
         if (cooldownEnabled) {
@@ -60,8 +74,12 @@ public class KeeperPlayer {
             new BukkitRunnable() { // Hráčovi povolí autosell <- Vypršel cooldown duration
                 @Override
                 public void run() {
-                    Logger.debugBlockBreak("Hráčovi '" + player.getName() + "' vypršel cooldown!");
-                    //TODO: Event na to udělat
+                    Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            Bukkit.getPluginManager().callEvent(new PlayerAutosellCooldownEndEvent(keeperPlayer));
+                        }
+                    });
                     autosellCooldownTo = 0;
                     canHaveAutosell = true;
                 }
@@ -70,6 +88,7 @@ public class KeeperPlayer {
     }
 
     public void enableAutosellMode() {
+        KeeperPlayer keeperPlayer = this;
         inAutoSellMode = true;
         canHaveAutosell = false;
 
@@ -85,8 +104,14 @@ public class KeeperPlayer {
             new BukkitRunnable() { // Hráčovi dojde duration při autosellu <- Zapne se cooldown duration
                 @Override
                 public void run() {
-                    Logger.debugBlockBreak("Hráčovi '" + player.getName() + "' vypršel duration!");
-                    //TODO: Event na to
+                    Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+                        @Override
+                        public void run() {
+                            Bukkit.getPluginManager().callEvent(new PlayerAutosellStopEvent(keeperPlayer));
+                        }
+                    });
+                    String message = "§6§l[!]§6 Vypršel ti Autosell!";
+
                     autosellDurationTo = 0;
                     inAutoSellMode = false;
                     canHaveAutosell = false;
@@ -97,33 +122,48 @@ public class KeeperPlayer {
                         canHaveAutosell = false;
                         long cooldownDuration = config.getLong("autosell.cooldown.time");
                         autosellCooldownTo = System.currentTimeMillis() + cooldownDuration;
+                        message += " Znovu aktivace bude možná za §e" + cooldownDuration / 1000 + " §6sekund!";
 
                         new BukkitRunnable() { // Hráčovi povolí autosell <- Vypršel cooldown duration
                             @Override
                             public void run() {
-                                Logger.debugBlockBreak("Hráčovi '" + player.getName() + "' vypršel cooldown!");
-                                //TODO: Event na to udělat
+                                Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Bukkit.getPluginManager().callEvent(new PlayerAutosellCooldownEndEvent(keeperPlayer));
+                                    }
+                                });
+                                ChatInfo.success(player, "Vypršel ti cooldown na Autosell! Můžeš si ho znovu zapnout.");
                                 autosellCooldownTo = 0;
                                 canHaveAutosell = true;
                             }
                         }.runTaskLaterAsynchronously(Main.getInstance(), (20 * cooldownDuration) / 1000); // ms -> ticks
                     }
+                    player.sendMessage(message);
                 }
             }.runTaskLaterAsynchronously(Main.getInstance(), (20 * duration) / 1000); // ms -> ticks
         }
+        Bukkit.getPluginManager().callEvent(new PlayerAutosellStartEvent(this));
     }
 
     public void updateVaultBalance() {
         if (toPayFromAutosell == 0.0)
             return;
+        KeeperPlayer keeperPlayer = this;
         Main.getVaultEconomy().depositPlayer(player, toPayFromAutosell);
+        Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.getPluginManager().callEvent(new PlayerAutosellGotPaidEvent(keeperPlayer, toPayFromAutosell));
+            }
+        });
         toPayFromAutosell = 0.0;
     }
 
     public void refreshPlayerRank() {
         playerRank = Utils.findPlayersRankByPermission(player);
         if (playerRank == null) {
-            Logger.danger("Při načítání player ranku pro hráče " + player.getName() + " (" + player.getUniqueId() + ") došlo k chybě! Defaultní rank bude 1...");
+            Logger.danger("Při načítání player ranku pro hráče " + player.getName() + " (" + player.getUniqueId() + ") došlo k chybě! Defaultní rank bude A...");
             playerRank = Rank.getByWeight(1);
         }
     }

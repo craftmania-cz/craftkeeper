@@ -1,10 +1,11 @@
 package cz.craftmania.craftkeeper.managers;
 
 import cz.craftmania.craftkeeper.Main;
+import cz.craftmania.craftkeeper.events.DropsToInventoryEvent;
 import cz.craftmania.craftkeeper.listeners.blockListeners.*;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.utils.Logger;
-import net.md_5.bungee.api.chat.ItemTag;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,14 +16,11 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 public class AutosellManager {
 
@@ -65,36 +63,47 @@ public class AutosellManager {
                         keeperPlayer.addToPay(price);
                         Main.getKeeperManager().updateKeeperPlayer(keeperPlayer);
                         Logger.debugBlockBreak("After: " + Main.getKeeperManager().getKeeperPlayer(player).getToPayFromAutosell());
-
-                        event.setCancelled(true);
-                        block.setType(Material.AIR);
-
-                        if (Main.getInstance().getConfig().getBoolean("autosell.exp-to-player")) {
-                            player.giveExp(event.getExpToDrop());
-                        }
-
-                        if (Main.getInstance().getConfig().getBoolean("autosell.do-damage-to-tool")) {
-                            ItemStack tool = player.getInventory().getItemInMainHand();
-                            if (EnchantmentTarget.TOOL.includes(tool)) {
-                                if (tool.containsEnchantment(Enchantment.DURABILITY)) {
-                                    int enchantLevel = tool.getEnchantmentLevel(Enchantment.DURABILITY);
-                                    if (doDamage(enchantLevel)) {
-                                        tool.setDurability((short)(tool.getDurability() + 1));
-                                    }
-                                } else {
-                                    tool.setDurability((short)(tool.getDurability() + 1));
-                                }
-                                if (tool.getDurability() >= tool.getType().getMaxDurability()) {
-                                    player.getInventory().getItemInMainHand().setAmount(0);
-                                    player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 10f, 1f);
-                                }
-                                Logger.debug("Player is holding a tool.");
-                            }
-                            player.getInventory().setItemInMainHand(tool);
-                        }
-                        Logger.debugBlockBreak("Done");
                     }
                 }
+
+                Block block = event.getBlock();
+                List<ItemStack> blockDrops = new ArrayList<>(block.getDrops(player.getInventory().getItemInMainHand()));
+
+                event.setCancelled(true);
+                block.setType(Material.AIR);
+
+                if (Main.getInstance().getConfig().getBoolean("exp-to-player")) {
+                    player.giveExp(event.getExpToDrop());
+                }
+
+                if (Main.getInstance().getConfig().getBoolean("do-damage-to-tool")) {
+                    ItemStack tool = player.getInventory().getItemInMainHand();
+                    if (EnchantmentTarget.TOOL.includes(tool)) {
+                        if (tool.containsEnchantment(Enchantment.DURABILITY)) {
+                            int enchantLevel = tool.getEnchantmentLevel(Enchantment.DURABILITY);
+                            if (doDamage(enchantLevel)) {
+                                tool.setDurability((short) (tool.getDurability() + 1));
+                            }
+                        } else {
+                            tool.setDurability((short) (tool.getDurability() + 1));
+                        }
+                        if (tool.getDurability() >= tool.getType().getMaxDurability()) {
+                            player.getInventory().getItemInMainHand().setAmount(0);
+                            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 10f, 1f);
+                        }
+                        Logger.debugBlockBreak("Player is holding a tool.");
+                    }
+                    player.getInventory().setItemInMainHand(tool);
+                }
+                // Drops to inv
+                boolean dropsToInv = Main.getInstance().getConfig().getBoolean("drops-to-inv");
+                if (dropsToInv) {
+                    for (ItemStack drop : blockDrops) {
+                        player.getInventory().addItem(drop);
+                    }
+                    Bukkit.getPluginManager().callEvent(new DropsToInventoryEvent(keeperPlayer, blockDrops, block));
+                }
+                Logger.debugBlockBreak("Done");
             }
         }
     }
