@@ -3,6 +3,7 @@ package cz.craftmania.craftkeeper;
 import co.aikar.commands.PaperCommandManager;
 import cz.craftmania.craftkeeper.commands.AutosellCommand;
 import cz.craftmania.craftkeeper.commands.SellallCommand;
+import cz.craftmania.craftkeeper.extension.KeeperExtension;
 import cz.craftmania.craftkeeper.listeners.PlayerListener;
 import cz.craftmania.craftkeeper.managers.AutosellManager;
 import cz.craftmania.craftkeeper.managers.KeeperManager;
@@ -68,6 +69,12 @@ public class Main extends JavaPlugin {
 
         // HikariCP - SQL
         initDatabase();
+
+        // PlaceholderAPI
+        Logger.info("Registruji PlaceholderAPI CraftRoleplay extension!");
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new KeeperExtension().register();
+        }
 
         // Managers
         Logger.info("Načítám managery!");

@@ -11,6 +11,7 @@ import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.Rank;
 import cz.craftmania.craftkeeper.objects.SellPrices;
+import cz.craftmania.craftkeeper.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +38,7 @@ public class SellallGUI implements InventoryProvider {
             Material material = entry.getKey();
             double price = entry.getValue();
 
-            ItemStack item = createItem(material, "§e" + material.name(), Collections.singletonList("§7Cena: §e" + price + "§6$"));
+            ItemStack item = createItem(material, "§e" + Utils.processBlockName(material.name()), Collections.singletonList("§7Cena: §e" + price + "§6$"));
             items.add(ClickableItem.empty(item));
         }
 

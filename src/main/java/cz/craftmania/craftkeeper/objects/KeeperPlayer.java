@@ -80,6 +80,7 @@ public class KeeperPlayer {
                             Bukkit.getPluginManager().callEvent(new PlayerAutosellCooldownEndEvent(keeperPlayer));
                         }
                     });
+                    ChatInfo.success(player, "Vypršel ti cooldown na Autosell! Můžeš si ho znovu zapnout.");
                     autosellCooldownTo = 0;
                     canHaveAutosell = true;
                 }

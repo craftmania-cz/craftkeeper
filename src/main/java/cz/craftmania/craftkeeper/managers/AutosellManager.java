@@ -42,7 +42,6 @@ public class AutosellManager {
                             if (!autosellAllowedInCreative)
                                 return;
                         }
-
                         Block block = event.getBlock();
                         List<ItemStack> blockDrops = new ArrayList<>(block.getDrops(player.getInventory().getItemInMainHand()));
 
@@ -97,7 +96,7 @@ public class AutosellManager {
                 }
                 // Drops to inv
                 boolean dropsToInv = Main.getInstance().getConfig().getBoolean("drops-to-inv");
-                if (dropsToInv) {
+                if (dropsToInv && !keeperPlayer.isInAutoSellMode()) {
                     for (ItemStack drop : blockDrops) {
                         player.getInventory().addItem(drop);
                     }

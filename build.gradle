@@ -32,6 +32,7 @@ repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "https://plugins.gradle.org/m2/" }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' } // PlaceholderAPI
 }
 
 dependencies {
@@ -59,6 +60,9 @@ dependencies {
 
     // Others
     compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.4'
+
+    // PlaceholderAPI
+    compileOnly group: 'me.clip', name: 'placeholderapi', version: '2.10.9'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.12'
