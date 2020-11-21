@@ -55,13 +55,12 @@ public class AutosellManager {
 
                         double price = 0.0;
                         for (ItemStack drop : blockDrops) {
-                            price += Main.getSellManager().getPriceOfItemstackByRank(drop, keeperPlayer.getPlayerRank());
+                            price += Main.getSellManager().getPriceOfItemstackByRank(player, drop, keeperPlayer.getPlayerRank());
                         }
 
-                        Logger.debugBlockBreak("Before: " + keeperPlayer.getToPayFromAutosell());
+                        price = Main.getMultiplierManager().enhanceSellValue(player, price);
                         keeperPlayer.addToPay(price);
                         Main.getKeeperManager().updateKeeperPlayer(keeperPlayer);
-                        Logger.debugBlockBreak("After: " + Main.getKeeperManager().getKeeperPlayer(player).getToPayFromAutosell());
                     }
                 }
 

@@ -2,13 +2,16 @@ package cz.craftmania.craftkeeper;
 
 import co.aikar.commands.PaperCommandManager;
 import cz.craftmania.craftkeeper.commands.AutosellCommand;
+import cz.craftmania.craftkeeper.commands.MultiplierCommand;
 import cz.craftmania.craftkeeper.commands.SellallCommand;
 import cz.craftmania.craftkeeper.extension.KeeperExtension;
 import cz.craftmania.craftkeeper.listeners.PlayerListener;
 import cz.craftmania.craftkeeper.managers.AutosellManager;
 import cz.craftmania.craftkeeper.managers.KeeperManager;
+import cz.craftmania.craftkeeper.managers.MultiplierManager;
 import cz.craftmania.craftkeeper.managers.SellManager;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
+import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.sql.SQLManager;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.configs.Config;
@@ -33,6 +36,7 @@ public class Main extends JavaPlugin {
     private @Getter static KeeperManager keeperManager;
     private @Getter static SellManager sellManager;
     private @Getter static AutosellManager autosellManager;
+    private @Getter static MultiplierManager multiplierManager;
     // Economy
     private @Getter static Economy vaultEconomy;
     // SQL
@@ -81,6 +85,7 @@ public class Main extends JavaPlugin {
         keeperManager = new KeeperManager();
         sellManager = new SellManager();
         autosellManager = new AutosellManager();
+        multiplierManager = new MultiplierManager();
 
         // Economy
         Logger.info("Probíhá načítání ekonomiky!");
@@ -131,6 +136,7 @@ public class Main extends JavaPlugin {
     private void loadCommands() {
         commandManager.registerCommand(new SellallCommand());
         commandManager.registerCommand(new AutosellCommand());
+        commandManager.registerCommand(new MultiplierCommand());
     }
 
     private void loadRunnables() {

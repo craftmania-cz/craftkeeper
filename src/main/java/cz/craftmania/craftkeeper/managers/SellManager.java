@@ -29,9 +29,10 @@ public class SellManager {
         reloadPrices();
     }
 
-    public Double getPriceOfItemstackByRank(ItemStack itemStack, Rank rank) {
+    public Double getPriceOfItemstackByRank(Player player, ItemStack itemStack, Rank rank) {
         SellPrices sellPrices = Main.getSellManager().getSellPricesByRank(rank);
-        return sellPrices.getPrices().get(itemStack.getType());
+        Double sellPricesBase = sellPrices.getPrices().get(itemStack.getType());
+        return Main.getMultiplierManager().enhanceSellValue(player, sellPricesBase);
     }
 
     public void sellEverythingByRank(KeeperPlayer keeperPlayer, Rank rank) {
@@ -56,6 +57,7 @@ public class SellManager {
                 ChatInfo.warning(player, "Nemáš v inventáři žádný materiál, který by odpovídal tomuto shopu, takže jsi nic neprodal!");
                 return;
             }
+            moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
             Main.getVaultEconomy().depositPlayer(player, moneyToAdd);
             Double finalMoneyToAdd = moneyToAdd;
             Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
