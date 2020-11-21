@@ -1,9 +1,12 @@
 package cz.craftmania.craftkeeper.managers;
 
+import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.Multiplier;
+import cz.craftmania.craftkeeper.objects.MultiplierType;
 import cz.craftmania.craftkeeper.utils.Logger;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -23,11 +26,27 @@ public class MultiplierManager {
         List<Multiplier> multipliers = getActiveMultipliersForPlayer(player);
         double boostingBy = 0;
         for (Multiplier multiplier : multipliers) {
-            boostingBy+= multiplier.getPercentageBoost() * 100; // 0.5 -> 50%
+            boostingBy += multiplier.getPercentageBoost() * 100; // 0.5 -> 50%
         }
-        boostingBy+= 100;
-        valueAfterEnchancing = baseValue / (double)100 * boostingBy;
+        boostingBy += 100;
+        valueAfterEnchancing = baseValue / (double) 100 * boostingBy;
         return valueAfterEnchancing;
+    }
+
+    public void loadMultipliersForPlayer(Player player) {
+        List<Multiplier> multipliers = Main.getSqlManager().getPlayersMultipliers(player);
+        this.multipliers.addAll(multipliers);
+    }
+
+    public void saveMultipliersForPlayer(Player player) {
+        List<Multiplier> multipliers = getPersonalMultipliersByPlayer(player);
+        for (Multiplier multiplier : multipliers) {
+            Main.getSqlManager().updateMultiplierRemainingLength(multiplier);
+        }
+    }
+
+    public void unloadMultipliersFromCache(Player player) {
+        multipliers.removeAll(getPersonalMultipliersByPlayer(player));
     }
 
     // Getters
@@ -46,9 +65,7 @@ public class MultiplierManager {
             switch (multiplier.getMultiplierType()) {
                 case PERSONAL:
                     if (multiplier.getTargetUUID().equals(player.getUniqueId())) {
-                        if (multiplier.isActive()) {
-                            returnValues.add(multiplier);
-                        }
+                        returnValues.add(multiplier);
                     }
                     break;
                 case EVENT:
@@ -60,19 +77,14 @@ public class MultiplierManager {
         return returnValues;
     }
 
-    /**
-     * Vrátí multipliery, které hráč vlastní (Personal + Global). Pokud chceš získat
-     * všechny multipliery, které jsou aktivní pro daného hráče (Persona + Global + Event), využij {@link #getActiveMultipliersForPlayer(Player)}
-     *
-     * @param player
-     *
-     * @return
-     */
-    public List<Multiplier> getMultipliersByPlayer(Player player) {
+    public List<Multiplier> getPersonalMultipliersByPlayer(Player player) {
         List<Multiplier> returnValues = new ArrayList<>();
         for (Multiplier multiplier : multipliers) {
-            if (multiplier.getTargetUUID().equals(player.getUniqueId()))
-                returnValues.add(multiplier);
+            if (multiplier.getTargetUUID().equals(player.getUniqueId())) {
+                if (multiplier.getMultiplierType() == MultiplierType.PERSONAL) {
+                    returnValues.add(multiplier);
+                }
+            }
         }
         return returnValues;
     }
@@ -80,7 +92,7 @@ public class MultiplierManager {
     // Managers
 
     public void addMultiplier(Multiplier multiplier) {
-        //todo: Ukládání multiplierů do SQL
+        Main.getSqlManager().createMultiplier(multiplier);
         multipliers.add(multiplier);
     }
 
@@ -89,6 +101,13 @@ public class MultiplierManager {
         for (Multiplier multiplierInList : multipliers) {
             if (multiplierInList.getInternalID() == multiplier.getInternalID()) {
                 multipliers.remove(counter);
+                if (multiplier.getMultiplierType() == MultiplierType.PERSONAL) {
+                    Player player = Bukkit.getPlayer(multiplier.getTargetUUID());
+                    if (player != null) {
+                        ChatInfo.warning(player, "Vypršel ti Multiplier s " + (multiplier.getPercentageBoost() * 100) + "% boostem!");
+                    }
+                }
+                Main.getSqlManager().removeMultiplier(multiplier);
                 return true;
             }
             counter++;
@@ -114,22 +133,24 @@ public class MultiplierManager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Logger.debug("Refreshing multipliers...");
+                //Logger.debug("Refreshing multipliers...");
                 List<Multiplier> multipliersCopy = new ArrayList<>(multipliers);
                 for (Multiplier multiplier : multipliersCopy) {
-                    if (multiplier.isActive()) {
-                        Logger.debug("Checking multiplier: " + multiplier.toString());
-                        long remainingLength = multiplier.getRemainingLength();
-                        remainingLength -= 10000; // 10000ms = 10s
-                        if (remainingLength <= 0) {
-                            Logger.debug(" - Result: Deleting!");
-                            removeMultiplier(multiplier);
-                            //todo post event skončený multiplier
-                        } else {
-                            Logger.debug(" - Result: Updating!");
-                            multiplier.setRemainingLength(remainingLength);
-                            updateMultiplier(multiplier);
-                        }
+                    if (multiplier.getMultiplierType() == MultiplierType.PERSONAL) {
+                        Player player = Bukkit.getPlayer(multiplier.getTargetUUID());
+                        if (player == null)
+                            continue;
+                    }
+                    //Logger.debug("Checking multiplier: " + multiplier.toString());
+                    long remainingLength = multiplier.getRemainingLength();
+                    remainingLength -= 10000; // 10000ms = 10s
+                    if (remainingLength <= 0) {
+                        //Logger.debug(" - Result: Deleting!");
+                        removeMultiplier(multiplier);
+                    } else {
+                        //Logger.debug(" - Result: Updating!");
+                        multiplier.setRemainingLength(remainingLength);
+                        updateMultiplier(multiplier);
                     }
                 }
             }

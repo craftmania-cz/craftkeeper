@@ -15,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,34 +40,47 @@ public class SellManager {
         if (keeperPlayer.getPlayerRank().getWeight() < rank.getWeight()) {
             Logger.danger("Pozor! Hráčovi " + keeperPlayer.getPlayer().getName() + " se prodávají věci pomocí vyššího ranku (" + rank.getName() + ") než má on sám (" + keeperPlayer.getPlayerRank().getName() + ")!");
         }
-        ProtectedAsync.runAsync(() -> {
-            Player player = keeperPlayer.getPlayer();
-            PlayerInventory playerInventory = player.getInventory();
-            SellPrices sellPrices = Main.getSellManager().getSellPricesByRank(rank);
-            Double moneyToAdd = 0.0;
-            for (ItemStack itemInInvetory : playerInventory.getContents()) {
-                if (itemInInvetory == null)
-                    continue;
-                if (sellPrices.getPrices().containsKey(itemInInvetory.getType())) {
-                    Double price = sellPrices.getPrices().get(itemInInvetory.getType());
-                    moneyToAdd += itemInInvetory.getAmount() * price;
-                    playerInventory.remove(itemInInvetory);
+        Logger.debug("Here! 0.5");
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Logger.debug("here!");
+                Player player = keeperPlayer.getPlayer();
+                PlayerInventory playerInventory = player.getInventory();
+                SellPrices sellPrices = Main.getSellManager().getSellPricesByRank(rank);
+                double moneyToAdd = 0.0;
+                Logger.debug("here! 2");
+                for (ItemStack itemInInvetory : playerInventory.getContents()) {
+                    if (itemInInvetory == null)
+                        continue;
+                    if (sellPrices.getPrices().containsKey(itemInInvetory.getType())) {
+                        Double price = sellPrices.getPrices().get(itemInInvetory.getType());
+                        moneyToAdd += itemInInvetory.getAmount() * price;
+                        playerInventory.remove(itemInInvetory);
+                    }
                 }
-            }
-            if (moneyToAdd == 0) {
-                ChatInfo.warning(player, "Nemáš v inventáři žádný materiál, který by odpovídal tomuto shopu, takže jsi nic neprodal!");
-                return;
-            }
-            moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
-            Main.getVaultEconomy().depositPlayer(player, moneyToAdd);
-            Double finalMoneyToAdd = moneyToAdd;
-            Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    Bukkit.getPluginManager().callEvent(new PlayerSellallEvent(keeperPlayer, finalMoneyToAdd));
+                Logger.debug("here! 3");
+                Logger.debug("Value: " + moneyToAdd);
+                if (moneyToAdd == 0.0) {
+                    Logger.debug("Here 0!!!");
+                    ChatInfo.warning(player, "Nemáš v inventáři žádný materiál, který by odpovídal tomuto shopu, takže jsi nic neprodal!");
+                    return;
                 }
-            });
-        });
+                Logger.debug("here! 4");
+                moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
+                Logger.debug("here! 5");
+                Main.getVaultEconomy().depositPlayer(player, moneyToAdd);
+                Double finalMoneyToAdd = moneyToAdd;
+                Logger.debug("here! 6");
+                Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
+                    @Override
+                    public void run() {
+                        Logger.debug("here! 7");
+                        Bukkit.getPluginManager().callEvent(new PlayerSellallEvent(keeperPlayer, finalMoneyToAdd));
+                    }
+                });
+            }
+        }.runTaskAsynchronously(Main.getInstance());
     }
 
     public SellPrices getSellPricesByRank(Rank rank) {

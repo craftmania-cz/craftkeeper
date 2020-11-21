@@ -64,6 +64,9 @@ dependencies {
     // PlaceholderAPI
     compileOnly group: 'me.clip', name: 'placeholderapi', version: '2.10.9'
 
+    // Luckyperms
+    compileOnly 'net.luckperms:api:5.2'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'

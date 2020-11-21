@@ -9,6 +9,7 @@ import cz.craftmania.craftkeeper.events.PlayerAutosellStopEvent;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.Utils;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class KeeperPlayer {
 
-    private @Getter Player player;
+    private @Getter @Setter Player player;
     private @Getter Rank playerRank;
     private @Getter boolean inAutoSellMode = false;
     private @Getter double toPayFromAutosell = 0.0;
@@ -105,6 +106,8 @@ public class KeeperPlayer {
             new BukkitRunnable() { // Hráčovi dojde duration při autosellu <- Zapne se cooldown duration
                 @Override
                 public void run() {
+                    if (autosellDurationTo == 0)
+                        return;
                     Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
                         @Override
                         public void run() {

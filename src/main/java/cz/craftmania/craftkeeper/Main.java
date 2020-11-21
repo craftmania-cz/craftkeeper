@@ -12,19 +12,25 @@ import cz.craftmania.craftkeeper.managers.MultiplierManager;
 import cz.craftmania.craftkeeper.managers.SellManager;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.Multiplier;
+import cz.craftmania.craftkeeper.objects.Rank;
 import cz.craftmania.craftkeeper.sql.SQLManager;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.configs.Config;
 import cz.craftmania.craftkeeper.utils.configs.ConfigAPI;
 import cz.craftmania.craftlibs.sentry.CraftSentry;
 import lombok.Getter;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Main extends JavaPlugin {
 
@@ -39,8 +45,10 @@ public class Main extends JavaPlugin {
     private @Getter static MultiplierManager multiplierManager;
     // Economy
     private @Getter static Economy vaultEconomy;
+    // Luckyperms
+    private @Getter static LuckPerms luckPermsAPI;
     // SQL
-    private @Getter SQLManager sqlManager;
+    private @Getter static SQLManager sqlManager;
     // Commands
     private PaperCommandManager commandManager;
     // Sentry
@@ -90,6 +98,13 @@ public class Main extends JavaPlugin {
         // Economy
         Logger.info("Probíhá načítání ekonomiky!");
         vaultEconomy = cz.craftmania.crafteconomy.Main.getVaultEconomy();
+
+        // Luckperms
+        Logger.info("Získávám si LuckPerms API!");
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider != null) {
+            luckPermsAPI = provider.getProvider();
+        }
 
         // PlaceholderAPI
         Logger.info("Registruji PlaceholderAPI CraftRoleplay extension!");
@@ -154,6 +169,9 @@ public class Main extends JavaPlugin {
 
     private void initDatabase() {
         sqlManager = new SQLManager(this);
+
+        if (!sqlManager.tableMultiplierExists())
+            sqlManager.createMultipliersTable();
     }
 
     /**

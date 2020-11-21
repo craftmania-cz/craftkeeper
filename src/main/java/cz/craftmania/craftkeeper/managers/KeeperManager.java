@@ -25,6 +25,8 @@ public class KeeperManager {
             keeperPlayers.add(newKeeperPlayer);
             return newKeeperPlayer;
         }
+        keeperPlayer.setPlayer(player);
+        updateKeeperPlayer(keeperPlayer);
         keeperPlayer.refreshPlayerRank();
         return keeperPlayer;
     }

@@ -3,16 +3,19 @@ package cz.craftmania.craftkeeper.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
+import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.Multiplier;
+import cz.craftmania.craftkeeper.objects.MultiplierType;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.MultiplierAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@CommandAlias("multiplier|mp")
+@CommandAlias("multiplier|mpk")
 @Description("Umožní management multiplierů")
 public class MultiplierCommand extends BaseCommand {
 
@@ -27,29 +30,35 @@ public class MultiplierCommand extends BaseCommand {
         // todo
     }
 
-    @Subcommand("debug")
-    @CommandAlias("mpd")
-    public void debug(CommandSender sender) {
-        List<Multiplier> multipliers = Main.getMultiplierManager().getMultipliers();
-        for (Multiplier multiplier : multipliers) {
-            Logger.info(multiplier.toString());
+    @Subcommand("create")
+    public void createMultiplier(CommandSender sender, String nick, String type, long lengthMS, double percent) {
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
+            ChatInfo.error(p, "Ale ale... Co to zkoušíš? Tento příkaz je jen pro konzoli.");
+            return;
         }
-    }
+        Player player = Bukkit.getPlayer(nick);
+        double percentageBoost = (double) percent / 100;
 
-    @Subcommand("debug personal")
-    @CommandAlias("mpdp")
-    public void debugPersonal(CommandSender sender) {
-        sender.sendMessage("Adding personal multiplier...");
-        Player player = (Player) sender;
-        MultiplierAPI.createNewPersonalMultiplier(player, 32525, 0.8);
-    }
-
-    @Subcommand("debug global")
-    @CommandAlias("mpdg")
-    public void debugGlobal(CommandSender sender, int precentage) {
-        double boostBy = (double)precentage / (double)100;
-        sender.sendMessage("Adding global multiplier..." + boostBy);
-        Player player = (Player) sender;
-        MultiplierAPI.createNewGlobalMultiplier(player, 32342, (double)precentage / (double)100);
+        MultiplierType multiplierType = MultiplierType.getByName(type);
+        if (multiplierType == null) {
+            Logger.danger("[!!!!!] Něco využilo příkaz /multiplier create a použilo to špatný typ multiplieru ('" + type + "')!");
+            return;
+        }
+        if (player == null) {
+            Logger.danger("[!!!!!] Player objekt hráče '" + nick + "' je z nějakého důvodu null. Chudák, nedostane Multiplier. Každopádně tato chyba by nikdy neměla nastat.");
+            return;
+        }
+        switch (multiplierType) {
+            case EVENT:
+                MultiplierAPI.createNewEventMultiplier(lengthMS, percentageBoost);
+                break;
+            case GLOBAL:
+                MultiplierAPI.createNewGlobalMultiplier(nick, lengthMS, percentageBoost);
+                break;
+            case PERSONAL:
+                MultiplierAPI.createNewPersonalMultiplier(player, lengthMS, percentageBoost);
+                break;
+        }
     }
 }

@@ -16,4 +16,16 @@ public enum MultiplierType {
         }
         return "";
     }
+
+    public static MultiplierType getByName(String name) {
+        switch (name.toLowerCase()) {
+            case "event":
+                return MultiplierType.EVENT;
+            case "global":
+                return MultiplierType.GLOBAL;
+            case "personal":
+                return MultiplierType.PERSONAL;
+        }
+        return null;
+    }
 }

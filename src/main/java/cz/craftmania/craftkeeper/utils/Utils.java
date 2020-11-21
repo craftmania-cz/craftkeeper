@@ -2,23 +2,32 @@ package cz.craftmania.craftkeeper.utils;
 
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.Rank;
+import net.luckperms.api.cacheddata.CachedPermissionData;
+import net.luckperms.api.model.data.DataType;
+import net.luckperms.api.model.user.User;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 
 public class Utils {
 
     public static Rank findPlayersRankByPermission(Player player) {
         String[] preparedPermissionRankNode = Main.getKeeperManager().getPermissionRankNode().split("\\.");
+        Logger.debug("--------");
+        Logger.debug("'" + Arrays.toString(preparedPermissionRankNode) + "'");
 
         Rank rank = null;
-        for (PermissionAttachmentInfo pio : player.getEffectivePermissions()) {
-            String permissionNode = pio.getPermission();
-            if (permissionNode.startsWith(preparedPermissionRankNode[0])) {
-                String ending = permissionNode.substring(permissionNode.lastIndexOf('.') + 1);
+        User user = Main.getLuckPermsAPI().getUserManager().getUser(player.getUniqueId());
+        CachedPermissionData permissionData = user.getCachedData().getPermissionData();
+        Map<String, Boolean> permissions = permissionData.getPermissionMap();
+        for (Map.Entry<String, Boolean> entry : permissions.entrySet()) {
+            if (entry.getKey().startsWith(preparedPermissionRankNode[0])) {
+                String ending = entry.getKey().substring(entry.getKey().lastIndexOf('.') + 1);
                 rank = Rank.getByName(ending);
             }
         }
