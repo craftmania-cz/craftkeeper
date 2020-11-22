@@ -5,6 +5,8 @@ import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.objects.MultiplierType;
 import cz.craftmania.craftkeeper.utils.Logger;
+import cz.craftmania.craftkeeper.utils.MessageMaker;
+import cz.craftmania.craftkeeper.utils.ProtectedAsync;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,6 +40,12 @@ public class MultiplierManager {
         this.multipliers.addAll(multipliers);
     }
 
+    public void loadGlobalMultipliers() {
+        List<Multiplier> multipliers = Main.getSqlManager().getGlobalMultipliers();
+        this.multipliers.addAll(multipliers);
+        Logger.info("Načteno " + multipliers.size() + " GLOBAL a/nebo EVENT Multiplierů!");
+    }
+
     public void saveMultipliersForPlayer(Player player) {
         List<Multiplier> multipliers = getPersonalMultipliersByPlayer(player);
         for (Multiplier multiplier : multipliers) {
@@ -62,7 +70,7 @@ public class MultiplierManager {
     public List<Multiplier> getActiveMultipliersForPlayer(Player player) {
         List<Multiplier> returnValues = new ArrayList<>();
         for (Multiplier multiplier : multipliers) {
-            switch (multiplier.getMultiplierType()) {
+            switch (multiplier.getType()) {
                 case PERSONAL:
                     if (multiplier.getTargetUUID().equals(player.getUniqueId())) {
                         returnValues.add(multiplier);
@@ -81,7 +89,7 @@ public class MultiplierManager {
         List<Multiplier> returnValues = new ArrayList<>();
         for (Multiplier multiplier : multipliers) {
             if (multiplier.getTargetUUID().equals(player.getUniqueId())) {
-                if (multiplier.getMultiplierType() == MultiplierType.PERSONAL) {
+                if (multiplier.getType() == MultiplierType.PERSONAL) {
                     returnValues.add(multiplier);
                 }
             }
@@ -101,12 +109,6 @@ public class MultiplierManager {
         for (Multiplier multiplierInList : multipliers) {
             if (multiplierInList.getInternalID() == multiplier.getInternalID()) {
                 multipliers.remove(counter);
-                if (multiplier.getMultiplierType() == MultiplierType.PERSONAL) {
-                    Player player = Bukkit.getPlayer(multiplier.getTargetUUID());
-                    if (player != null) {
-                        ChatInfo.warning(player, "Vypršel ti Multiplier s " + (multiplier.getPercentageBoost() * 100) + "% boostem!");
-                    }
-                }
                 Main.getSqlManager().removeMultiplier(multiplier);
                 return true;
             }
@@ -130,30 +132,50 @@ public class MultiplierManager {
     // Timer
 
     public void runMultiplierTimer() {
+        final int[] counter = {0};
         new BukkitRunnable() {
             @Override
             public void run() {
-                //Logger.debug("Refreshing multipliers...");
                 List<Multiplier> multipliersCopy = new ArrayList<>(multipliers);
                 for (Multiplier multiplier : multipliersCopy) {
-                    if (multiplier.getMultiplierType() == MultiplierType.PERSONAL) {
+                    if (multiplier.getType() == MultiplierType.PERSONAL) {
                         Player player = Bukkit.getPlayer(multiplier.getTargetUUID());
                         if (player == null)
                             continue;
                     }
-                    //Logger.debug("Checking multiplier: " + multiplier.toString());
-                    long remainingLength = multiplier.getRemainingLength();
-                    remainingLength -= 10000; // 10000ms = 10s
-                    if (remainingLength <= 0) {
-                        //Logger.debug(" - Result: Deleting!");
-                        removeMultiplier(multiplier);
+                    if (multiplier.getType() == MultiplierType.EVENT || multiplier.getType() == MultiplierType.GLOBAL) {
+                        if (System.currentTimeMillis() >= multiplier.getRemainingLength()) {
+                            MessageMaker.announceEnd(multiplier);
+                            removeMultiplier(multiplier);
+                        }
                     } else {
-                        //Logger.debug(" - Result: Updating!");
-                        multiplier.setRemainingLength(remainingLength);
-                        updateMultiplier(multiplier);
+                        long remainingLength = multiplier.getRemainingLength();
+                        remainingLength -= 10000; // 10000ms = 10s
+                        if (remainingLength <= 0) {
+                            MessageMaker.announceEnd(multiplier);
+                            removeMultiplier(multiplier);
+                        } else {
+                            multiplier.setRemainingLength(remainingLength);
+                            updateMultiplier(multiplier);
+                        }
                     }
                 }
+                if (counter[0] == Main.getInstance().getConfig().getInt("multipliers.save-every-minute") * 6) {
+                    counter[0] = 0;
+                    saveAllPersonalMultipliers();
+                } else
+                    counter[0]++;
             }
         }.runTaskTimerAsynchronously(Main.getInstance(), 20L, 20L * 10); // Každých 10s
+    }
+
+    private void saveAllPersonalMultipliers() {
+        List<Multiplier> multipliers = new ArrayList<>();
+        for (Multiplier multiplier : this.multipliers) {
+            if (multiplier.getType() == MultiplierType.PERSONAL) {
+                multipliers.add(multiplier);
+            }
+        }
+        Main.getSqlManager().updateListOfMultipliersRemainingLength(multipliers);
     }
 }

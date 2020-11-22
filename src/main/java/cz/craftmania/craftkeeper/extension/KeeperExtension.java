@@ -2,9 +2,12 @@ package cz.craftmania.craftkeeper.extension;
 
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
+import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.utils.Utils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class KeeperExtension extends PlaceholderExpansion {
 
@@ -54,6 +57,18 @@ public class KeeperExtension extends PlaceholderExpansion {
                 try {
                     KeeperPlayer keeperPlayer = Main.getKeeperManager().getKeeperPlayer(player);
                     return String.valueOf(keeperPlayer.getRemainingDurationInMS() / 1000);
+                } catch (Exception ignored) {
+                    return "exception";
+                }
+            }
+            case "total_multiplier_boost": {
+                try {
+                    List<Multiplier> activeMultipliers = Main.getMultiplierManager().getActiveMultipliersForPlayer(player);
+                    double pb = 0.0;
+                    for (Multiplier multiplier : activeMultipliers) {
+                        pb += multiplier.getPercentageBoost();
+                    }
+                    return (pb * 100) + "";
                 } catch (Exception ignored) {
                     return "exception";
                 }

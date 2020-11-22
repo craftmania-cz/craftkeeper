@@ -24,6 +24,7 @@ public class MultiplierAPI {
                 percentageBoost
         );
         Main.getMultiplierManager().addMultiplier(multiplier);
+        MessageMaker.announceStart(multiplier);
         return multiplier;
     }
 
@@ -43,6 +44,7 @@ public class MultiplierAPI {
                 percentageBoost
         );
         Main.getMultiplierManager().addMultiplier(multiplier);
+        MessageMaker.announceStart(multiplier);
         return multiplier;
     }
 
@@ -62,6 +64,7 @@ public class MultiplierAPI {
                 percentageBoost
         );
         Main.getMultiplierManager().addMultiplier(multiplier);
+        MessageMaker.announceStart(multiplier);
         return multiplier;
     }
 }

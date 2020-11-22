@@ -54,3 +54,23 @@ autosell:
   allow-in-creative: false
   disabled-worlds:
     - "worldName"
+
+multipliers:
+  ## Za kolik minut se budou ukládat všechny multipliery
+  ## Pozor! Nikdy sem nedávej 0. Spamovalo by to každých 10s SQL.
+  save-every-minute: 30
+  ## Vypíše hráčovi všechny personal + global + event multipliery při připojení na server
+  announce-active-multipliers-on-join: true
+  personal:
+    ## Vypíše zprávu, že hráčovi začal personal mutliplier
+    message-on-start: true
+    ## Vypíše zprávu, že hráčovi vypršel personal multiplier
+    message-on-end: true
+  global:
+    ## Vypíše zprávu všem hráčům, že začal global multiplier
+    message-on-start: true
+    ## Vypíše zprávu všem hráčům, že skončil global multiplier
+    message-on-end: true
+  event:
+    message-on-end: true
+    message-on-start: true

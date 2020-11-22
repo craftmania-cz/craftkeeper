@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@CommandAlias("multiplier|mpk")
+@CommandAlias("multiplier|mpk|mp")
 @Description("Umožní management multiplierů")
 public class MultiplierCommand extends BaseCommand {
 
@@ -27,7 +27,23 @@ public class MultiplierCommand extends BaseCommand {
 
     @Default
     public void showCurrentMultiplierStatus(CommandSender sender) {
-        // todo
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            List<Multiplier> multiplierList = Main.getMultiplierManager().getActiveMultipliersForPlayer(player);
+            if (multiplierList.size() == 0) {
+                ChatInfo.error(player, "Nemáš žádné aktivní Multipliery!");
+                return;
+            }
+            player.sendMessage("\n§e§lAktivní Multipliery§e:");
+            double pb = 0.0;
+            for (Multiplier multiplier : multiplierList) {
+                player.sendMessage(" §8- §e" + multiplier.getType().translate() + " §7- §eBoost: §a" + (multiplier.getPercentageBoost() * 100) + "% §7- §eSkončí za: §a" + multiplier.getRemainingTimeReadable());
+                pb += multiplier.getPercentageBoost();
+            }
+            if (multiplierList.size() > 1) {
+                player.sendMessage("§eDohromady se tvoje prodejní ceny zvýší o §a" + (pb * 100) + "%§e!");
+            }
+        }
     }
 
     @Subcommand("create")
@@ -45,7 +61,7 @@ public class MultiplierCommand extends BaseCommand {
             Logger.danger("[!!!!!] Něco využilo příkaz /multiplier create a použilo to špatný typ multiplieru ('" + type + "')!");
             return;
         }
-        if (player == null) {
+        if (player == null && multiplierType == MultiplierType.PERSONAL) {
             Logger.danger("[!!!!!] Player objekt hráče '" + nick + "' je z nějakého důvodu null. Chudák, nedostane Multiplier. Každopádně tato chyba by nikdy neměla nastat.");
             return;
         }

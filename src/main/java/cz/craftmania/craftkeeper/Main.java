@@ -125,6 +125,9 @@ public class Main extends JavaPlugin {
         Logger.info("Probíhá registrace runnablů!");
         loadRunnables();
 
+        Logger.info("Probíhá načítání GLOBAL a EVENT Multiplierů z SQL!");
+        Main.getMultiplierManager().loadGlobalMultipliers();
+
         Logger.info("Načítání dokončeno! (Zabralo to " + (System.currentTimeMillis() - start) + "ms)");
     }
 

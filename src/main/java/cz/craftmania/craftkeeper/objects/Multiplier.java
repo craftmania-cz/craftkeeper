@@ -4,52 +4,96 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class Multiplier {
 
-    private @Getter MultiplierType multiplierType; // Typ multiplieru
+    private @Getter MultiplierType type; // Typ multiplieru
     private @Getter String target; // @a = Event; Global = Hráč, který aktivoval globální boost; Personal = Hráč, kterému se bude boostit
     private @Getter UUID targetUUID; // Event = null; Global = Hráč uuid; Personal = Hráč uuid;
-    private @Getter long length; // Délka multiplieru v MS
+    private @Getter long length; // Délka multiplieru v MS; U global a event tam je System.currentMill...() + MS
     private @Getter @Setter long remainingLength; // Délka zbývajícího času multiplieru v MS
     private @Getter double percentageBoost; // O kolik to bude boostovat ceny v procentech - 134% = 1.34; 0% = 0; 50% = 0.5; etc...
     private @Getter long internalID;
 
-    public Multiplier(MultiplierType multiplierType, String target, UUID targetUUID, long length, long remainingLength, double percentageBoost) {
-        this.multiplierType = multiplierType;
+    public Multiplier(MultiplierType type, String target, UUID targetUUID, long length, long remainingLength, double percentageBoost) {
+        this.type = type;
         this.target = target;
         this.targetUUID = targetUUID;
         this.length = length;
-        this.remainingLength = remainingLength;
+        if (type == MultiplierType.EVENT || type == MultiplierType.GLOBAL) {
+            this.remainingLength = System.currentTimeMillis() + remainingLength;
+        } else
+            this.remainingLength = remainingLength;
         this.percentageBoost = percentageBoost;
         this.internalID = System.currentTimeMillis();
     }
 
-    public Multiplier(MultiplierType multiplierType, String target, UUID targetUUID, long length, long remainingLength, double percentageBoost, long internalID) {
-        this.multiplierType = multiplierType;
+    public Multiplier(MultiplierType type, String target, UUID targetUUID, long length, long remainingLength, double percentageBoost, long internalID) {
+        this.type = type;
         this.target = target;
         this.targetUUID = targetUUID;
         this.length = length;
-        this.remainingLength = remainingLength;
+        if (type == MultiplierType.EVENT || type == MultiplierType.GLOBAL) {
+            this.remainingLength = System.currentTimeMillis() + remainingLength;
+        } else
+            this.remainingLength = remainingLength;
         this.percentageBoost = percentageBoost;
         this.internalID = internalID;
     }
 
-    public long getRemainingMS() {
-        return length - remainingLength;
+    public String getRemainingTimeReadable() {
+        long ms;
+        if (type == MultiplierType.EVENT || type == MultiplierType.GLOBAL)
+            ms = remainingLength - System.currentTimeMillis();
+        else
+            ms = remainingLength;
+        int minutes = (int) ((ms / (1000*60)) % 60);
+        int hours   = (int) ((ms / (1000*60*60)) % 24);
+
+        if (hours == 0 && minutes == 0)
+            return "<1m";
+
+        String str = "";
+        if (hours != 0)
+            str += hours + "h";
+        if (minutes != 0)
+            str += minutes + "m";
+        return str;
     }
 
     @Override
     public String toString() {
         String returnValue = "{";
 
-        returnValue += "type=" + multiplierType.name() + ";";
-        returnValue += "target=" + target + ";";
-        returnValue += "targetUUID=" + targetUUID.toString() + ";";
-        returnValue += "length=" + length + ";";
-        returnValue += "remainingLength=" + remainingLength + ";";
-        returnValue += "percentageBoost=" + percentageBoost + ";";
-        returnValue += "internalID=" + internalID + ";";
+        try {
+            returnValue += "type=" + type.name() + ";";
+        } catch (Exception exception) {
+        }
+        try {
+            returnValue += "target=" + target + ";";
+        } catch (Exception exception) {
+        }
+        try {
+            returnValue += "targetUUID=" + targetUUID.toString() + ";";
+        } catch (Exception exception) {
+        }
+        try {
+            returnValue += "length=" + length + ";";
+        } catch (Exception exception) {
+        }
+        try {
+            returnValue += "remainingLength=" + remainingLength + ";";
+        } catch (Exception exception) {
+        }
+        try {
+            returnValue += "percentageBoost=" + percentageBoost + ";";
+        } catch (Exception exception) {
+        }
+        try {
+            returnValue += "internalID=" + internalID + ";";
+        } catch (Exception exception) {
+        }
 
         returnValue += "}";
         return returnValue;

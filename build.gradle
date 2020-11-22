@@ -7,7 +7,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group 'cz.craftmania.craftkeeper'
-version '0.0.2_testable'
+version '0.0.3'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
