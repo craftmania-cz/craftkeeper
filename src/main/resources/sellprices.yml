@@ -1,19 +1,19 @@
 # Hodnoty prodávání itemů dle Ranku
 
 sellPrices:
-  1:
+  A:
     COBBLESTONE: 1.0
     STONE: 1.2
-  2:
+  B:
     COBBLESTONE: 1.2
     STONE: 1.4
     STONE_BRICKS: 2.0
-  3:
+  C:
     COBBLESTONE: 1.4
     STONE: 1.6
     STONE_BRICKS: 2.2
     GLOWSTONE: 3.0
-  4:
+  D:
     COBBLESTONE: 1.6
     STONE: 1.8
     STONE_BRICKS: 2.4

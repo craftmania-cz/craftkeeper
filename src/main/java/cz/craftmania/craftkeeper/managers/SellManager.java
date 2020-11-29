@@ -104,20 +104,20 @@ public class SellManager {
         }
         Logger.debug("Zjišťuji data do " + Rank.getLast().getWeight() + ". ranku...");
         List<String> availableRanksStrings = new ArrayList<>(config.getKeys(false));
-        List<Integer> availableRanks = new ArrayList<>();
-        for (String rankNumber : availableRanksStrings) {
+        List<String> availableRanks = new ArrayList<>();
+        for (String rankName : availableRanksStrings) {
             try {
-                availableRanks.add(Integer.parseInt(rankNumber));
+                availableRanks.add(rankName);
             } catch (Exception e) {
                 e.printStackTrace();
                 Logger.danger("V sellPrices.json se je nějaký rank označený stringem, místo číslem!");
             }
         }
         //int maxSavedRank = getMaxInt(availableRanks);
-        for (Integer rankNumber : availableRanks) {
-            ConfigurationSection section = config.getConfigurationSection(rankNumber.toString());
+        for (String rankName : availableRanks) {
+            ConfigurationSection section = config.getConfigurationSection(rankName);
             if (section == null) {
-                Logger.danger("Nastala chyba, která by nikdy neměla nastat. RankNumber: " + rankNumber + "; section == null (viz. SellPricesManager)");
+                Logger.danger("Nastala chyba, která by nikdy neměla nastat. RankName: " + rankName + "; section == null (viz. SellPricesManager)");
                 continue;
             }
             List<String> materials = new ArrayList<>(section.getKeys(false));
@@ -126,18 +126,8 @@ public class SellManager {
                 Double price = section.getDouble(material);
                 materialsWithPrices.put(material, price);
             }
-            sellPricesList.add(new SellPrices(rankNumber, materialsWithPrices));
+            sellPricesList.add(new SellPrices(rankName, materialsWithPrices));
         }
         Logger.success("Dokončeno načítání prodávajících hodnot materiálů! (Trvalo " + (System.currentTimeMillis() - start) + "ms)");
-    }
-
-    // Utils
-    private int getMaxInt(List<Integer> list) {
-        int maxNum = 0;
-        for (Integer number : list) {
-            if (maxNum < number)
-                maxNum = number;
-        }
-        return maxNum;
     }
 }

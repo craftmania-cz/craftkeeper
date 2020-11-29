@@ -21,7 +21,7 @@ public class MultiplierCommand extends BaseCommand {
 
     @HelpCommand
     public void helpCommand(CommandSender sender, CommandHelp help) {
-        sender.sendMessage("§e§lAutosell commands:");
+        sender.sendMessage("§e§lMultiplier commands:");
         help.showHelp();
     }
 

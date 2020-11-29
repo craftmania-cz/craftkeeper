@@ -2,6 +2,7 @@ package cz.craftmania.craftkeeper;
 
 import co.aikar.commands.PaperCommandManager;
 import cz.craftmania.craftkeeper.commands.AutosellCommand;
+import cz.craftmania.craftkeeper.commands.KeeperCommand;
 import cz.craftmania.craftkeeper.commands.MultiplierCommand;
 import cz.craftmania.craftkeeper.commands.SellallCommand;
 import cz.craftmania.craftkeeper.extension.KeeperExtension;
@@ -155,6 +156,7 @@ public class Main extends JavaPlugin {
         commandManager.registerCommand(new SellallCommand());
         commandManager.registerCommand(new AutosellCommand());
         commandManager.registerCommand(new MultiplierCommand());
+        commandManager.registerCommand(new KeeperCommand());
     }
 
     private void loadRunnables() {

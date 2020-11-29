@@ -15,10 +15,10 @@ public class SellPrices {
     private @Getter Rank rank;
     private @Getter Map<Material, Double> prices = new HashMap<>();
 
-    public SellPrices(Integer rankNumber, Map<String, Double> pricesUnresolved) {
-        this.rank = Rank.getByWeight(rankNumber);
+    public SellPrices(String rankName, Map<String, Double> pricesUnresolved) {
+        this.rank = Rank.getByName(rankName);
         if (rank == null) {
-            Logger.danger("[SELLPRICES]: Rank " + rankNumber + " neexistuje! V sellprices.yml nejspíše existuje rank, který je vyšší, než v pluginu.");
+            Logger.danger("[SELLPRICES]: Rank " + rankName + " neexistuje! V sellprices.yml nejspíše existuje rank, který je vyšší, než v pluginu.");
             return;
         }
         resolvePrices(rank, pricesUnresolved);

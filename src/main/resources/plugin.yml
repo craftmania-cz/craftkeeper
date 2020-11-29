@@ -1,6 +1,6 @@
 name: CraftKeeper
 version: 0.0.3
-description: Autosell plugin pro Prison server s Multipliery 
+description: Autosell plugin pro Prison server s Multipliery
 depend:
   - "CraftEconomy"
 author: lilmayu

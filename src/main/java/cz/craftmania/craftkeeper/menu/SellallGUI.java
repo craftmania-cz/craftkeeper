@@ -32,6 +32,10 @@ public class SellallGUI implements InventoryProvider {
     public void init(Player player, InventoryContents contents) {
         pagination = contents.pagination();
         SellPrices sellPrices = Main.getSellManager().getSellPricesByRank(rank);
+        if (sellPrices == null) {
+            ChatInfo.error(player, "Nastala chyba při získávání cen z Ranku " + rank.getName() + "! Prosím, nahlaš tuto chybu na discordu.");
+            return;
+        }
         List<ClickableItem> items = new ArrayList<>();
 
         for (Map.Entry<Material, Double> entry : sellPrices.getPrices().entrySet()) {
