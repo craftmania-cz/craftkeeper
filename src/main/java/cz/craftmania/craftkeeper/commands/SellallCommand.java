@@ -3,19 +3,15 @@ package cz.craftmania.craftkeeper.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
-import cz.craftmania.craftcore.spigot.inventory.builder.SmartInventory;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
-import cz.craftmania.craftkeeper.events.PlayerSellallInventoryOpenEvent;
-import cz.craftmania.craftkeeper.menu.SellallGUI;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
-import cz.craftmania.craftkeeper.objects.Rank;
 import cz.craftmania.craftkeeper.utils.Logger;
-import org.bukkit.Bukkit;
+import cz.wake.craftprison.objects.Rank;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@CommandAlias("sellall")
+@CommandAlias("sellall|sa")
 @Description("Umožní ti prodávat bloky")
 public class SellallCommand extends BaseCommand {
 

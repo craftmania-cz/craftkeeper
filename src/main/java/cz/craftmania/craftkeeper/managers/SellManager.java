@@ -5,10 +5,10 @@ import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.events.PlayerAutosellGotPaidEvent;
 import cz.craftmania.craftkeeper.events.PlayerSellallEvent;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
-import cz.craftmania.craftkeeper.objects.Rank;
 import cz.craftmania.craftkeeper.objects.SellPrices;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.ProtectedAsync;
+import cz.wake.craftprison.objects.Rank;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -40,16 +40,13 @@ public class SellManager {
         if (keeperPlayer.getPlayerRank().getWeight() < rank.getWeight()) {
             Logger.danger("Pozor! Hráčovi " + keeperPlayer.getPlayer().getName() + " se prodávají věci pomocí vyššího ranku (" + rank.getName() + ") než má on sám (" + keeperPlayer.getPlayerRank().getName() + ")!");
         }
-        Logger.debug("Here! 0.5");
         new BukkitRunnable() {
             @Override
             public void run() {
-                Logger.debug("here!");
                 Player player = keeperPlayer.getPlayer();
                 PlayerInventory playerInventory = player.getInventory();
                 SellPrices sellPrices = Main.getSellManager().getSellPricesByRank(rank);
                 double moneyToAdd = 0.0;
-                Logger.debug("here! 2");
                 for (ItemStack itemInInvetory : playerInventory.getContents()) {
                     if (itemInInvetory == null)
                         continue;
@@ -59,23 +56,16 @@ public class SellManager {
                         playerInventory.remove(itemInInvetory);
                     }
                 }
-                Logger.debug("here! 3");
-                Logger.debug("Value: " + moneyToAdd);
                 if (moneyToAdd == 0.0) {
-                    Logger.debug("Here 0!!!");
                     ChatInfo.warning(player, "Nemáš v inventáři žádný materiál, který by odpovídal tomuto shopu, takže jsi nic neprodal!");
                     return;
                 }
-                Logger.debug("here! 4");
                 moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
-                Logger.debug("here! 5");
                 Main.getVaultEconomy().depositPlayer(player, moneyToAdd);
                 Double finalMoneyToAdd = moneyToAdd;
-                Logger.debug("here! 6");
                 Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
                     @Override
                     public void run() {
-                        Logger.debug("here! 7");
                         Bukkit.getPluginManager().callEvent(new PlayerSellallEvent(keeperPlayer, finalMoneyToAdd));
                     }
                 });

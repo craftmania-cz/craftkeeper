@@ -3,6 +3,7 @@ package cz.craftmania.craftkeeper.extension;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.Multiplier;
+import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.Utils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -67,6 +68,16 @@ public class KeeperExtension extends PlaceholderExpansion {
                     double pb = 0.0;
                     for (Multiplier multiplier : activeMultipliers) {
                         pb += multiplier.getPercentageBoost();
+                    }
+                    try {
+                        int prestigeLevel = Main.getPrisonAPI().getPlayer(player).getPrestige();
+                        if (prestigeLevel >= 2) {
+                            pb += (prestigeLevel - 1) * 5;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Logger.danger("Chyba při získávání hráče z PrisonAPI!");
+                        Main.getInstance().sendSentryException(e);
                     }
                     return (pb * 100) + "";
                 } catch (Exception ignored) {

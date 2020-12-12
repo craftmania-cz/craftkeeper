@@ -9,9 +9,9 @@ import cz.craftmania.craftcore.spigot.inventory.builder.content.SlotIterator;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
-import cz.craftmania.craftkeeper.objects.Rank;
 import cz.craftmania.craftkeeper.objects.SellPrices;
 import cz.craftmania.craftkeeper.utils.Utils;
+import cz.wake.craftprison.objects.Rank;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -64,8 +64,8 @@ public class SellallGUI implements InventoryProvider {
         Rank previousRank = Rank.getByWeight(rank.getWeight() - 1);
         Rank nextRank = Rank.getByWeight(rank.getWeight() + 1);
 
-        boolean isPreviousRank = previousRank != null;
-        boolean isNextRank = nextRank != null;
+        boolean isPreviousRank = Main.getSellManager().getSellPricesByRank(previousRank) != null;
+        boolean isNextRank = Main.getSellManager().getSellPricesByRank(nextRank) != null;
 
         ItemStack previousRankItem, nextRankItem;
         ItemStack previousPage = createItem(Material.ARROW, "§ePředchozí strana", null);
@@ -95,12 +95,12 @@ public class SellallGUI implements InventoryProvider {
             }));
         }
         contents.set(5, 2, ClickableItem.of(previousRankItem, e -> {
-            if (previousRank == null)
+            if (Main.getSellManager().getSellPricesByRank(previousRank) == null)
                 return;
             SmartInventory.builder().size(6, 9).title("Výkupní seznam - Rank " + previousRank.getName()).provider(new SellallGUI(previousRank)).build().open(player);
         }));
         contents.set(5, 6, ClickableItem.of(nextRankItem, e -> {
-            if (nextRank == null)
+            if (Main.getSellManager().getSellPricesByRank(nextRank) == null)
                 return;
             SmartInventory.builder().size(6, 9).title("Výkupní seznam - Rank " + nextRank.getName()).provider(new SellallGUI(nextRank)).build().open(player);
         }));

@@ -48,6 +48,7 @@ dependencies {
     compileOnly ('cz.craftmania.crafteconomy:crafteconomy:1.3.6') {
         exclude group: 'io.github.jorelali'
     }
+    implementation name: 'CraftPrison-1.0'
 
     // Commands
     compile 'co.aikar:acf-paper:0.5.0-SNAPSHOT'

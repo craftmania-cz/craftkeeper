@@ -1,13 +1,11 @@
 package cz.craftmania.craftkeeper.utils;
 
 import cz.craftmania.craftkeeper.Main;
-import cz.craftmania.craftkeeper.objects.Rank;
+import cz.wake.craftprison.objects.Rank;
 import net.luckperms.api.cacheddata.CachedPermissionData;
-import net.luckperms.api.model.data.DataType;
 import net.luckperms.api.model.user.User;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -16,7 +14,20 @@ import java.util.Map;
 
 public class Utils {
 
-    public static Rank findPlayersRankByPermission(Player player) {
+    public static Rank getPermissionByPrisonAPI(Player player) {
+        Rank rank = null;
+        try {
+            rank = Main.getPrisonAPI().getPlayer(player).getRank();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.danger("Chyba při získávání hráče z PrisonAPI!");
+            Main.getInstance().sendSentryException(e);
+        }
+        return rank;
+    }
+
+    @Deprecated
+    public static Rank findPlayersRankByPermissionA(Player player) {
         String[] preparedPermissionRankNode = Main.getKeeperManager().getPermissionRankNode().split("\\.");
         Logger.debug("--------");
         Logger.debug("'" + Arrays.toString(preparedPermissionRankNode) + "'");

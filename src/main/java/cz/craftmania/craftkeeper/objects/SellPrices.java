@@ -1,6 +1,7 @@
 package cz.craftmania.craftkeeper.objects;
 
 import cz.craftmania.craftkeeper.utils.Logger;
+import cz.wake.craftprison.objects.Rank;
 import lombok.Getter;
 import org.bukkit.Material;
 

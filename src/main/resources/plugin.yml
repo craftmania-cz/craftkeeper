@@ -3,6 +3,7 @@ version: 0.0.3
 description: Autosell plugin pro Prison server s Multipliery
 depend:
   - "CraftEconomy"
+  - "CraftPrison"
 author: lilmayu
 api-version: 1.16
 main: cz.craftmania.craftkeeper.Main

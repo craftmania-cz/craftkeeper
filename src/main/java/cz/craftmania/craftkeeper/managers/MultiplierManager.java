@@ -30,6 +30,17 @@ public class MultiplierManager {
         for (Multiplier multiplier : multipliers) {
             boostingBy += multiplier.getPercentageBoost() * 100; // 0.5 -> 50%
         }
+        try {
+            int prestigeLevel = Main.getPrisonAPI().getPlayer(player).getPrestige();
+            if (prestigeLevel >= 2) {
+                boostingBy += (prestigeLevel - 1) * 5;
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Logger.danger("Chyba při získávání hráče z PrisonAPI!");
+            Main.getInstance().sendSentryException(e);
+        }
         boostingBy += 100;
         valueAfterEnchancing = baseValue / (double) 100 * boostingBy;
         return valueAfterEnchancing;
@@ -87,12 +98,15 @@ public class MultiplierManager {
 
     public List<Multiplier> getPersonalMultipliersByPlayer(Player player) {
         List<Multiplier> returnValues = new ArrayList<>();
-        for (Multiplier multiplier : multipliers) {
-            if (multiplier.getTargetUUID().equals(player.getUniqueId())) {
-                if (multiplier.getType() == MultiplierType.PERSONAL) {
-                    returnValues.add(multiplier);
+        try {
+            for (Multiplier multiplier : multipliers) {
+                if (multiplier.getTargetUUID().equals(player.getUniqueId())) {
+                    if (multiplier.getType() == MultiplierType.PERSONAL) {
+                        returnValues.add(multiplier);
+                    }
                 }
             }
+        } catch (Exception ignored) {
         }
         return returnValues;
     }

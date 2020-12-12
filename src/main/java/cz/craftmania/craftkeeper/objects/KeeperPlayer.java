@@ -8,6 +8,7 @@ import cz.craftmania.craftkeeper.events.PlayerAutosellStartEvent;
 import cz.craftmania.craftkeeper.events.PlayerAutosellStopEvent;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.Utils;
+import cz.wake.craftprison.objects.Rank;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -165,7 +166,7 @@ public class KeeperPlayer {
     }
 
     public void refreshPlayerRank() {
-        playerRank = Utils.findPlayersRankByPermission(player);
+        playerRank = Utils.getPermissionByPrisonAPI(player);
         if (playerRank == null) {
             Logger.danger("Při načítání player ranku pro hráče " + player.getName() + " (" + player.getUniqueId() + ") došlo k chybě! Defaultní rank bude A...");
             playerRank = Rank.getByWeight(1);

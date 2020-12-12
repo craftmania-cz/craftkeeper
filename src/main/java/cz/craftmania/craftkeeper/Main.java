@@ -13,12 +13,12 @@ import cz.craftmania.craftkeeper.managers.MultiplierManager;
 import cz.craftmania.craftkeeper.managers.SellManager;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.Multiplier;
-import cz.craftmania.craftkeeper.objects.Rank;
 import cz.craftmania.craftkeeper.sql.SQLManager;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.configs.Config;
 import cz.craftmania.craftkeeper.utils.configs.ConfigAPI;
 import cz.craftmania.craftlibs.sentry.CraftSentry;
+import cz.wake.craftprison.api.PrisonAPI;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
@@ -44,6 +44,8 @@ public class Main extends JavaPlugin {
     private @Getter static SellManager sellManager;
     private @Getter static AutosellManager autosellManager;
     private @Getter static MultiplierManager multiplierManager;
+    // CraftPrison
+    private @Getter static PrisonAPI prisonAPI;
     // Economy
     private @Getter static Economy vaultEconomy;
     // Luckyperms
@@ -99,6 +101,10 @@ public class Main extends JavaPlugin {
         // Economy
         Logger.info("Probíhá načítání ekonomiky!");
         vaultEconomy = cz.craftmania.crafteconomy.Main.getVaultEconomy();
+
+        // Prison
+        Logger.info("Probíhá načítání PrisonAPI!");
+        prisonAPI = new PrisonAPI();
 
         // Luckperms
         Logger.info("Získávám si LuckPerms API!");
