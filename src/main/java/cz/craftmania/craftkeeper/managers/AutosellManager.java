@@ -62,6 +62,7 @@ public class AutosellManager {
                 boolean dropsToInv = Main.getInstance().getConfig().getBoolean("drops-to-inv");
                 if (dropsToInv) {
                     event.setCancelled(true);
+                    block.setType(Material.AIR);
                     if (!keeperPlayer.isInAutoSellMode()) {
                         for (ItemStack drop : blockDrops) {
                             player.getInventory().addItem(drop);
