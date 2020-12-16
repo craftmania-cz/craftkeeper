@@ -46,6 +46,7 @@ public class MultiplierCommand extends BaseCommand {
         }
     }
 
+    @CommandPermission("craftkeeper.multiplier.create")
     @Subcommand("create")
     public void createMultiplier(CommandSender sender, String nick, String type, long lengthMS, double percent) {
         if (sender instanceof Player) {

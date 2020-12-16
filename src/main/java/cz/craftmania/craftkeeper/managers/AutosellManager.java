@@ -59,8 +59,16 @@ public class AutosellManager {
                 Block block = event.getBlock();
                 List<ItemStack> blockDrops = new ArrayList<>(block.getDrops(player.getInventory().getItemInMainHand()));
 
-                event.setCancelled(true);
-                block.setType(Material.AIR);
+                boolean dropsToInv = Main.getInstance().getConfig().getBoolean("drops-to-inv");
+                if (dropsToInv) {
+                    event.setCancelled(true);
+                    if (!keeperPlayer.isInAutoSellMode()) {
+                        for (ItemStack drop : blockDrops) {
+                            player.getInventory().addItem(drop);
+                        }
+                        Bukkit.getPluginManager().callEvent(new DropsToInventoryEvent(keeperPlayer, blockDrops, block));
+                    }
+                }
 
                 if (Main.getInstance().getConfig().getBoolean("exp-to-player")) {
                     player.giveExp(event.getExpToDrop());
@@ -83,14 +91,6 @@ public class AutosellManager {
                         }
                     }
                     player.getInventory().setItemInMainHand(tool);
-                }
-                // Drops to inv
-                boolean dropsToInv = Main.getInstance().getConfig().getBoolean("drops-to-inv");
-                if (dropsToInv && !keeperPlayer.isInAutoSellMode()) {
-                    for (ItemStack drop : blockDrops) {
-                        player.getInventory().addItem(drop);
-                    }
-                    Bukkit.getPluginManager().callEvent(new DropsToInventoryEvent(keeperPlayer, blockDrops, block));
                 }
             }
         }
