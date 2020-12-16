@@ -1,12 +1,10 @@
 package cz.craftmania.craftkeeper.managers;
 
-import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.objects.MultiplierType;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.MessageMaker;
-import cz.craftmania.craftkeeper.utils.ProtectedAsync;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class Multiplier {
 
@@ -48,8 +47,8 @@ public class Multiplier {
             ms = remainingLength - System.currentTimeMillis();
         else
             ms = remainingLength;
-        int minutes = (int) ((ms / (1000*60)) % 60);
-        int hours   = (int) ((ms / (1000*60*60)) % 24);
+        int minutes = (int) ((ms / (1000 * 60)) % 60);
+        int hours = (int) ((ms / (1000 * 60 * 60)) % 24);
 
         if (hours == 0 && minutes == 0)
             return "<1m";

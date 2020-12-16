@@ -12,7 +12,6 @@ import cz.craftmania.craftkeeper.managers.KeeperManager;
 import cz.craftmania.craftkeeper.managers.MultiplierManager;
 import cz.craftmania.craftkeeper.managers.SellManager;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
-import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.sql.SQLManager;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.configs.Config;
@@ -28,10 +27,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 public class Main extends JavaPlugin {
 

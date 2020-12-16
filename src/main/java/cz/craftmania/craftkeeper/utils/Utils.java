@@ -29,8 +29,6 @@ public class Utils {
     @Deprecated
     public static Rank findPlayersRankByPermissionA(Player player) {
         String[] preparedPermissionRankNode = Main.getKeeperManager().getPermissionRankNode().split("\\.");
-        Logger.debug("--------");
-        Logger.debug("'" + Arrays.toString(preparedPermissionRankNode) + "'");
 
         Rank rank = null;
         User user = Main.getLuckPermsAPI().getUserManager().getUser(player.getUniqueId());

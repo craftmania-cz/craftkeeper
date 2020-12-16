@@ -2,12 +2,10 @@ package cz.craftmania.craftkeeper.managers;
 
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
-import cz.craftmania.craftkeeper.events.PlayerAutosellGotPaidEvent;
 import cz.craftmania.craftkeeper.events.PlayerSellallEvent;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.SellPrices;
 import cz.craftmania.craftkeeper.utils.Logger;
-import cz.craftmania.craftkeeper.utils.ProtectedAsync;
 import cz.wake.craftprison.objects.Rank;
 import lombok.Getter;
 import org.bukkit.Bukkit;

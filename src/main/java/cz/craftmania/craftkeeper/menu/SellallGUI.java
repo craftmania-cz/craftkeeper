@@ -8,7 +8,6 @@ import cz.craftmania.craftcore.spigot.inventory.builder.content.Pagination;
 import cz.craftmania.craftcore.spigot.inventory.builder.content.SlotIterator;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
-import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.SellPrices;
 import cz.craftmania.craftkeeper.utils.Utils;
 import cz.wake.craftprison.objects.Rank;
@@ -123,7 +122,7 @@ public class SellallGUI implements InventoryProvider {
 
     public void makeBorders(InventoryContents contents) {
         ItemStack filler = createItem(Material.BLACK_STAINED_GLASS_PANE, " ", null);
-        for (int x=0; x<contents.inventory().getColumns(); x++) {
+        for (int x = 0; x < contents.inventory().getColumns(); x++) {
             contents.set(0, x, ClickableItem.empty(filler));
             contents.set(5, x, ClickableItem.empty(filler));
         }

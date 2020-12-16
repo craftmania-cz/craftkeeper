@@ -1,17 +1,15 @@
 package cz.craftmania.craftkeeper.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
-import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.objects.MultiplierType;
-import lombok.SneakyThrows;
+import cz.craftmania.craftkeeper.utils.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

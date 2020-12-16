@@ -5,18 +5,6 @@ public enum MultiplierType {
     GLOBAL,
     PERSONAL;
 
-    public String translate() {
-        switch (this) {
-            case EVENT:
-                return "Event";
-            case GLOBAL:
-                return "Globální";
-            case PERSONAL:
-                return "Osobní";
-        }
-        return "";
-    }
-
     public static MultiplierType getByName(String name) {
         switch (name.toLowerCase()) {
             case "event":
@@ -27,5 +15,17 @@ public enum MultiplierType {
                 return MultiplierType.PERSONAL;
         }
         return null;
+    }
+
+    public String translate() {
+        switch (this) {
+            case EVENT:
+                return "Event";
+            case GLOBAL:
+                return "Globální";
+            case PERSONAL:
+                return "Osobní";
+        }
+        return "";
     }
 }

@@ -45,14 +45,6 @@ public class AutosellManager {
                         Block block = event.getBlock();
                         List<ItemStack> blockDrops = new ArrayList<>(block.getDrops(player.getInventory().getItemInMainHand()));
 
-                        Logger.debugBlockBreak("-- -- -- --");
-                        Logger.debugBlockBreak("Hráč '" + player.getName() + "' zničil block '" + block.getType().toString() + "'");
-                        Logger.debugBlockBreak("Block dropy jsou:");
-                        for (ItemStack itemStack : blockDrops) {
-                            Logger.debugBlockBreak(" - Name: '" + itemStack.getType().toString() + "'; Amount: '" + itemStack.getAmount() + "'");
-                        }
-                        Logger.debugBlockBreak("Exp to drop: " + event.getExpToDrop());
-
                         double price = 0.0;
                         for (ItemStack drop : blockDrops) {
                             price += Main.getSellManager().getPriceOfItemstackByRank(player, drop, keeperPlayer.getPlayerRank());
@@ -89,7 +81,6 @@ public class AutosellManager {
                             player.getInventory().getItemInMainHand().setAmount(0);
                             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 10f, 1f);
                         }
-                        Logger.debugBlockBreak("Player is holding a tool.");
                     }
                     player.getInventory().setItemInMainHand(tool);
                 }
@@ -101,7 +92,6 @@ public class AutosellManager {
                     }
                     Bukkit.getPluginManager().callEvent(new DropsToInventoryEvent(keeperPlayer, blockDrops, block));
                 }
-                Logger.debugBlockBreak("Done");
             }
         }
     }

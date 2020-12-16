@@ -1,6 +1,5 @@
 package cz.craftmania.craftkeeper.listeners;
 
-import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.utils.Logger;

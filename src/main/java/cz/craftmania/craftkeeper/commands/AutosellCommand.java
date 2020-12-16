@@ -2,7 +2,10 @@ package cz.craftmania.craftkeeper.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.HelpCommand;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
@@ -11,7 +14,6 @@ import cz.craftmania.craftlibs.utils.TextComponentBuilder;
 import cz.craftmania.craftlibs.utils.actions.ConfirmAction;
 import cz.craftmania.craftlibs.utils.actions.IdentifierNotSetException;
 import cz.craftmania.craftlibs.utils.actions.PlayerNotSetException;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -58,7 +60,8 @@ public class AutosellCommand extends BaseCommand {
                                 keeperPlayer.disableAutosellMode();
                                 ChatInfo.info(player, "Vypnul sis Autosell!");
                             })
-                            .setExpireRunnable(a -> {}).build();
+                            .setExpireRunnable(a -> {
+                            }).build();
                     action.sendTextComponents();
                 } catch (PlayerNotSetException | IdentifierNotSetException e) {
                     e.printStackTrace();
