@@ -58,8 +58,17 @@ public class SellManager {
                     ChatInfo.warning(player, "Nemáš v inventáři žádný materiál, který by odpovídal tomuto shopu, takže jsi nic neprodal!");
                     return;
                 }
+
+                double moneyToAddWithoutEnhance = moneyToAdd;
                 moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
+
+                String message = "§aProdal jsi materiál a bylo ti přidáno §e" + Math.round(moneyToAddWithoutEnhance) + "$";
+                if (moneyToAdd != moneyToAddWithoutEnhance)
+                    message += "§a (§e+ " + Math.round(moneyToAdd - moneyToAddWithoutEnhance - 1) + "$§a)!";
+                else
+                    message += "§a!";
                 Main.getVaultEconomy().depositPlayer(player, moneyToAdd);
+                ChatInfo.success(player, message);
                 Double finalMoneyToAdd = moneyToAdd;
                 Main.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(Main.getInstance(), new Runnable() {
                     @Override
