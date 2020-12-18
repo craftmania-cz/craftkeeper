@@ -53,6 +53,8 @@ public class MessageMaker {
                     return;
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     player.sendMessage(message);
+                    player.sendTitle("§aSkončil Global Multiplier!", "§e" + Math.round(multiplier.getPercentageBoost() * 100) + "%§a Boost, Od hráče §e" + multiplier.getTarget() + "§a!", 10, 20*3, 10);
+
                 }
                 break;
             case EVENT:
@@ -60,6 +62,7 @@ public class MessageMaker {
                     return;
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     player.sendMessage(message);
+                    player.sendTitle("§aSkončil Event Multiplier!", "§e" + Math.round(multiplier.getPercentageBoost() * 100) + "%§a Boost", 10, 20*3, 10);
                 }
                 break;
             case PERSONAL:
@@ -68,6 +71,7 @@ public class MessageMaker {
                 Player player = Bukkit.getPlayer(multiplier.getTargetUUID());
                 if (player != null) {
                     player.sendMessage(message);
+                    player.sendTitle("§aSkončil ti Multiplier!", "§e" + Math.round(multiplier.getPercentageBoost() * 100) + "%§a Boost", 10, 20*3, 10);
                 }
                 break;
         }
@@ -82,6 +86,7 @@ public class MessageMaker {
                     return;
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     player.sendMessage(message);
+                    player.sendTitle("§aZapočal Global Multiplier!", "§e" + Math.round(multiplier.getPercentageBoost() * 100) + "%§a Boost, Od hráče §e" + multiplier.getTarget() + "§a!", 10, 20*3, 10);
                 }
                 break;
             case EVENT:
@@ -89,6 +94,7 @@ public class MessageMaker {
                     return;
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     player.sendMessage(message);
+                    player.sendTitle("§aZapočal Event Multiplier!", "§e" + Math.round(multiplier.getPercentageBoost() * 100) + "%§a Boost", 10, 20*3, 10);
                 }
                 break;
             case PERSONAL:
@@ -97,6 +103,7 @@ public class MessageMaker {
                 Player player = Bukkit.getPlayer(multiplier.getTargetUUID());
                 if (player != null) {
                     player.sendMessage(message);
+                    player.sendTitle("§aZapočal ti Multiplier!", "§e" + Math.round(multiplier.getPercentageBoost() * 100) + "%§a Boost", 10, 20*3, 10);
                 }
                 break;
         }
