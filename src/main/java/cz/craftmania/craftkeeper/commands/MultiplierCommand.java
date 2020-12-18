@@ -37,11 +37,11 @@ public class MultiplierCommand extends BaseCommand {
             player.sendMessage("\n§e§lAktivní Multipliery§e:");
             double pb = 0.0;
             for (Multiplier multiplier : multiplierList) {
-                player.sendMessage(" §8- §e" + multiplier.getType().translate() + " §7- §eBoost: §a" + (multiplier.getPercentageBoost() * 100) + "% §7- §eSkončí za: §a" + multiplier.getRemainingTimeReadable());
+                player.sendMessage(" §8- §e" + multiplier.getType().translate() + " §7- §eBoost: §a" + Math.round((multiplier.getPercentageBoost() * 100)) + "% §7- §eSkončí za: §a" + multiplier.getRemainingTimeReadable());
                 pb += multiplier.getPercentageBoost();
             }
             if (multiplierList.size() > 1) {
-                player.sendMessage("§eDohromady se tvoje prodejní ceny zvýší o §a" + (pb * 100) + "%§e!");
+                player.sendMessage("§eDohromady se tvoje prodejní ceny zvýší o §a" + Math.round(pb * 100) + "%§e!");
             }
         }
     }
