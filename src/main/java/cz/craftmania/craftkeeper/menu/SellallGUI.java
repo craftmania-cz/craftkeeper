@@ -8,6 +8,7 @@ import cz.craftmania.craftcore.spigot.inventory.builder.content.Pagination;
 import cz.craftmania.craftcore.spigot.inventory.builder.content.SlotIterator;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
+import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.SellPrices;
 import cz.craftmania.craftkeeper.utils.Utils;
 import cz.wake.craftprison.objects.Rank;
@@ -35,13 +36,23 @@ public class SellallGUI implements InventoryProvider {
             ChatInfo.error(player, "Nastala chyba při získávání cen z Ranku " + rank.getName() + "! Prosím, nahlaš tuto chybu na discordu.");
             return;
         }
+        boolean hasPlayerMultipliers = Main.getMultiplierManager().getActiveMultipliersForPlayer(player).size() != 0;
         List<ClickableItem> items = new ArrayList<>();
 
         for (Map.Entry<Material, Double> entry : sellPrices.getPrices().entrySet()) {
             Material material = entry.getKey();
             double price = entry.getValue();
+            double enhancedPrice = price;
 
-            ItemStack item = createItem(material, "§e" + Utils.processBlockName(material.name()), Collections.singletonList("§7Cena: §e" + price + "§6$"));
+            List<String> description = new ArrayList<>();
+            description.add("§7Cena: §e" + price + "§6$");
+
+            if (hasPlayerMultipliers) {
+                enhancedPrice = Main.getMultiplierManager().enhanceSellValue(player, enhancedPrice);
+                description.add("§7Cena s MP: §e" + Math.round(enhancedPrice) + "§6$");
+            }
+
+            ItemStack item = createItem(material, "§e" + Utils.processBlockName(material.name()), description);
             items.add(ClickableItem.empty(item));
         }
 

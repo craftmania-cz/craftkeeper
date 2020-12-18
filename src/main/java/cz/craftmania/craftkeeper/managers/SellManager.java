@@ -62,9 +62,9 @@ public class SellManager {
                 double moneyToAddWithoutEnhance = moneyToAdd;
                 moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
 
-                String message = "§aProdal jsi materiál a bylo ti přidáno §e" + Math.round(moneyToAddWithoutEnhance) + "$";
+                String message = "§aProdal jsi materiál a bylo ti přidáno §e" + Math.round(moneyToAddWithoutEnhance) + "§6$";
                 if (moneyToAdd != moneyToAddWithoutEnhance)
-                    message += "§a (§e+ " + Math.round(moneyToAdd - moneyToAddWithoutEnhance - 1) + "$§a)!";
+                    message += "§a (§e+ " + Math.round(moneyToAdd - moneyToAddWithoutEnhance - 1) + "§6$§a)!";
                 else
                     message += "§a!";
                 Main.getVaultEconomy().depositPlayer(player, moneyToAdd);
