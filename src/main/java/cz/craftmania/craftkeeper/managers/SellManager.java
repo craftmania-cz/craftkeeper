@@ -51,7 +51,7 @@ public class SellManager {
                     if (sellPrices.getPrices().containsKey(itemInInvetory.getType())) {
                         Double price = sellPrices.getPrices().get(itemInInvetory.getType());
                         moneyToAdd += itemInInvetory.getAmount() * price;
-                        playerInventory.remove(itemInInvetory);
+                        itemInInvetory.setAmount(0);
                     }
                 }
                 if (moneyToAdd == 0.0) {
@@ -63,7 +63,7 @@ public class SellManager {
                 moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
 
                 String message = "§aProdal jsi materiál a bylo ti přidáno §e" + Math.round(moneyToAddWithoutEnhance) + "§6$";
-                if (moneyToAdd != moneyToAddWithoutEnhance)
+                if ((int) moneyToAdd != (int) moneyToAddWithoutEnhance)
                     message += "§a (§e+ " + Math.round(moneyToAdd - moneyToAddWithoutEnhance - 1) + "§6$§a)!";
                 else
                     message += "§a!";
