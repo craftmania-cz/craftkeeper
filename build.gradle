@@ -33,6 +33,7 @@ repositories {
     maven { url "https://plugins.gradle.org/m2/" }
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' } // PlaceholderAPI
+    maven { url 'https://repo.pcgamingfreaks.at/repository/maven-everything'}
 }
 
 dependencies {
@@ -67,6 +68,9 @@ dependencies {
 
     // Luckyperms
     compileOnly 'net.luckperms:api:5.2'
+
+    // Minepacks
+    compile "at.pcgamingfreaks:Minepacks-API:2.2"
 
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.12'

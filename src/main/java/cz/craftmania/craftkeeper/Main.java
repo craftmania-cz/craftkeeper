@@ -1,5 +1,6 @@
 package cz.craftmania.craftkeeper;
 
+import at.pcgamingfreaks.Minepacks.Bukkit.API.MinepacksPlugin;
 import co.aikar.commands.PaperCommandManager;
 import cz.craftmania.craftkeeper.commands.AutosellCommand;
 import cz.craftmania.craftkeeper.commands.KeeperCommand;
@@ -22,6 +23,7 @@ import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,6 +48,8 @@ public class Main extends JavaPlugin {
     private @Getter static Economy vaultEconomy;
     // Luckyperms
     private @Getter static LuckPerms luckPermsAPI;
+    // Minepacks API
+    private @Getter static MinepacksPlugin minepacksPlugin;
     // SQL
     private @Getter static SQLManager sqlManager;
     // Commands
@@ -108,6 +112,13 @@ public class Main extends JavaPlugin {
         if (provider != null) {
             luckPermsAPI = provider.getProvider();
         }
+
+        Logger.info("Získávám si Minepacks API!");
+        Plugin bukkitPlugin = Bukkit.getPluginManager().getPlugin("Minepacks");
+        if (!(bukkitPlugin instanceof MinepacksPlugin)) {
+            Logger.danger("Minepacks není načteno!");
+        }
+        minepacksPlugin = (MinepacksPlugin) bukkitPlugin;
 
         // PlaceholderAPI
         Logger.info("Registruji PlaceholderAPI CraftRoleplay extension!");

@@ -1,5 +1,6 @@
 package cz.craftmania.craftkeeper.managers;
 
+import at.pcgamingfreaks.Minepacks.Bukkit.API.Backpack;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.events.PlayerSellallEvent;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -54,6 +56,22 @@ public class SellManager {
                         itemInInvetory.setAmount(0);
                     }
                 }
+
+                Inventory backpackInventory = null;
+                Backpack bp = Main.getMinepacksPlugin().getBackpackCachedOnly(player);
+                if (bp != null) {
+                    backpackInventory = bp.getInventory();
+                    for (ItemStack itemInBackpack : backpackInventory.getContents()) {
+                        if (itemInBackpack == null)
+                            continue;
+                        if (sellPrices.getPrices().containsKey(itemInBackpack.getType())) {
+                            Double price = sellPrices.getPrices().get(itemInBackpack.getType());
+                            moneyToAdd += itemInBackpack.getAmount() * price;
+                            itemInBackpack.setAmount(0);
+                        }
+                    }
+                }
+
                 if (moneyToAdd == 0.0) {
                     ChatInfo.warning(player, "Nemáš v inventáři žádný materiál, který by odpovídal tomuto shopu, takže jsi nic neprodal!");
                     return;
