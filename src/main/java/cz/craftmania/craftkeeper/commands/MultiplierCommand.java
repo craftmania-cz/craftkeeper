@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import javax.swing.*;
 import java.util.List;
 
 @CommandAlias("multiplier|mpk|mp")
@@ -76,6 +77,44 @@ public class MultiplierCommand extends BaseCommand {
             case PERSONAL:
                 MultiplierAPI.createNewPersonalMultiplier(player, lengthMS, percentageBoost);
                 break;
+        }
+    }
+
+    @Subcommand("remove")
+    @CommandPermission("craftkeeper.multiplier.remove")
+    @Syntax("[InternalID]")
+    public void removeCommand(CommandSender sender, long internalID) {
+        // Moc línej to checkovat s SQL ID.... Internal ID it is.
+        Multiplier multiplier = Main.getMultiplierManager().getMultiplierByInternalID(internalID);
+        if (multiplier == null) {
+            sender.sendMessage("§e§l[!]§e Multiplier s interním ID '" + internalID + "' nenalezen! Pro list aktivních multiplierů použij /mp debug");
+            return;
+        }
+        sender.sendMessage("§a§l[>>]§a Probíhá odstraňování multiplieru s interním ID '" + internalID + "'...");
+        Main.getMultiplierManager().removeMultiplier(multiplier);
+    }
+
+    @Subcommand("debug")
+    @CommandPermission("craftkeeper.multiplier.debug")
+    public void debugCommand(CommandSender sender) {
+        sender.sendMessage("§a[--] Debug : Multipliers [--]");
+        sender.sendMessage("§8 [Counter]([InternalID]): [Type]; [Target]; [TargetUUID]; [Length]; [remainingLength]; [PercentageBoost]");
+
+        List<Multiplier> multipliers = Main.getMultiplierManager().getMultipliers();
+        int counter = 0;
+        for (Multiplier multiplier : multipliers) {
+            String message = "";
+
+            message += "§6" + counter + "§f";
+            message += "(" + multiplier.getInternalID() + "): ";
+            message += multiplier.getType().toString() + "; ";
+            message += multiplier.getTarget() + "; ";
+            message += multiplier.getTargetUUID() + "; ";
+            message += multiplier.getLength() + "; ";
+            message += multiplier.getRemainingLength() + "; ";
+            message += multiplier.getPercentageBoost() + "; ";
+
+            sender.sendMessage(message);
         }
     }
 }

@@ -5,6 +5,7 @@ import cz.craftmania.craftkeeper.objects.Multiplier;
 import cz.craftmania.craftkeeper.objects.MultiplierType;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.craftmania.craftkeeper.utils.MessageMaker;
+import cz.craftmania.craftkeeper.utils.ProtectedAsync;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -109,9 +110,19 @@ public class MultiplierManager {
         return returnValues;
     }
 
+    public Multiplier getMultiplierByInternalID(long internalID) {
+        for (Multiplier multiplier : multipliers) {
+            if (multiplier.getInternalID() == internalID) {
+                return multiplier;
+            }
+        }
+        return null;
+    }
+
     // Managers
 
     public void addMultiplier(Multiplier multiplier) {
+        Logger.debug("[MULTIPLIERS] Přidávání Multiplieru '" + multiplier.toString()+ "'...");
         Main.getSqlManager().createMultiplier(multiplier);
         multipliers.add(multiplier);
     }
@@ -120,6 +131,7 @@ public class MultiplierManager {
         int counter = 0;
         for (Multiplier multiplierInList : multipliers) {
             if (multiplierInList.getInternalID() == multiplier.getInternalID()) {
+                Logger.debug("[MULTIPLIERS] Odstraňování Multiplieru '" + multiplier.toString() + "'...");
                 multipliers.remove(counter);
                 Main.getSqlManager().removeMultiplier(multiplier);
                 return true;
@@ -148,6 +160,7 @@ public class MultiplierManager {
         new BukkitRunnable() {
             @Override
             public void run() {
+                Logger.debug("[MULTIPLIERS]§8 Probíhá update všech multiplierů...");
                 List<Multiplier> multipliersCopy = new ArrayList<>(multipliers);
                 for (Multiplier multiplier : multipliersCopy) {
                     if (multiplier.getType() == MultiplierType.PERSONAL) {
@@ -155,39 +168,31 @@ public class MultiplierManager {
                         if (player == null)
                             continue;
                     }
-                    if (multiplier.getType() == MultiplierType.EVENT || multiplier.getType() == MultiplierType.GLOBAL) {
-                        if (System.currentTimeMillis() >= multiplier.getRemainingLength()) {
-                            MessageMaker.announceEnd(multiplier);
-                            removeMultiplier(multiplier);
-                        }
+                    long remainingLength = multiplier.getRemainingLength();
+                    remainingLength -= 10000; // 10000ms = 10s
+                    if (remainingLength <= 0) {
+                        MessageMaker.announceEnd(multiplier);
+                        removeMultiplier(multiplier);
                     } else {
-                        long remainingLength = multiplier.getRemainingLength();
-                        remainingLength -= 10000; // 10000ms = 10s
-                        if (remainingLength <= 0) {
-                            MessageMaker.announceEnd(multiplier);
-                            removeMultiplier(multiplier);
-                        } else {
-                            multiplier.setRemainingLength(remainingLength);
-                            updateMultiplier(multiplier);
-                        }
+                        multiplier.setRemainingLength(remainingLength);
+                        updateMultiplier(multiplier);
                     }
                 }
                 if (counter[0] == Main.getInstance().getConfig().getInt("multipliers.save-every-minute") * 6) {
                     counter[0] = 0;
-                    saveAllPersonalMultipliers();
+                    ProtectedAsync.runAsync(() -> {
+                        updateAllMultipliersToDatabase();
+                    });
                 } else
                     counter[0]++;
+
+                Logger.debug("[MULTIPLIERS]§8 Update všech multiplierů dokončen!");
             }
         }.runTaskTimerAsynchronously(Main.getInstance(), 20L, 20L * 10); // Každých 10s
     }
 
-    private void saveAllPersonalMultipliers() {
-        List<Multiplier> multipliers = new ArrayList<>();
-        for (Multiplier multiplier : this.multipliers) {
-            if (multiplier.getType() == MultiplierType.PERSONAL) {
-                multipliers.add(multiplier);
-            }
-        }
-        Main.getSqlManager().updateListOfMultipliersRemainingLength(multipliers);
+    private void updateAllMultipliersToDatabase() {
+        Logger.debug("[MULTIPLIERS]§7 Aktulizuji všechny multipliery do DB.");
+        Main.getSqlManager().updateListOfMultipliersRemainingLength(new ArrayList<>(this.multipliers));
     }
 }

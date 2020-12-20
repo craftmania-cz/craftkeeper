@@ -199,6 +199,7 @@ public class SQLManager {
                     ps.setLong(2, multiplier.getInternalID());
                     ps.executeUpdate();
                 } catch (Exception ignored) {
+                    ignored.printStackTrace();
                 } finally {
                     pool.close(conn, ps, null);
                 }

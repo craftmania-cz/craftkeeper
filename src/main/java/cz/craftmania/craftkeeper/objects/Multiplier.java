@@ -20,10 +20,7 @@ public class Multiplier {
         this.target = target;
         this.targetUUID = targetUUID;
         this.length = length;
-        if (type == MultiplierType.EVENT || type == MultiplierType.GLOBAL) {
-            this.remainingLength = System.currentTimeMillis() + remainingLength;
-        } else
-            this.remainingLength = remainingLength;
+        this.remainingLength = remainingLength;
         this.percentageBoost = percentageBoost;
         this.internalID = System.currentTimeMillis();
     }
@@ -33,20 +30,13 @@ public class Multiplier {
         this.target = target;
         this.targetUUID = targetUUID;
         this.length = length;
-        if (type == MultiplierType.EVENT || type == MultiplierType.GLOBAL) {
-            this.remainingLength = System.currentTimeMillis() + remainingLength;
-        } else
-            this.remainingLength = remainingLength;
+        this.remainingLength = remainingLength;
         this.percentageBoost = percentageBoost;
         this.internalID = internalID;
     }
 
     public String getRemainingTimeReadable() {
-        long ms;
-        if (type == MultiplierType.EVENT || type == MultiplierType.GLOBAL)
-            ms = remainingLength - System.currentTimeMillis();
-        else
-            ms = remainingLength;
+        long ms = remainingLength;
         int minutes = (int) ((ms / (1000 * 60)) % 60);
         int hours = (int) ((ms / (1000 * 60 * 60)) % 24);
 
