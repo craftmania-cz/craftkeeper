@@ -7,6 +7,7 @@ import net.luckperms.api.model.user.User;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Locale;
@@ -54,5 +55,29 @@ public class Utils {
         name = String.valueOf(name.charAt(0)).toUpperCase() + name.substring(1);
         name = name.replaceAll("_", " ");
         return WordUtils.capitalizeFully(name);
+    }
+
+    public static String formatMoney(double d) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        if (d >= 1.0E18) {
+            return df.format(d / 1.0E18) + "S";
+        }
+        if (d >= 1.0E15) {
+            return df.format(d / 1.0E15) + "Q";
+        }
+        if (d >= 1.0E12) {
+            return df.format(d / 1.0E12) + "T";
+        }
+        if (d >= 1000000000) {
+            return df.format(d / 1000000000) + "B";
+        }
+        if (d >= 1000000) {
+            return df.format(d / 1000000) + "M";
+        }
+        if (d >= 1000) {
+            return df.format(d / 1000) + "k";
+        }
+
+        return df.format(d);
     }
 }

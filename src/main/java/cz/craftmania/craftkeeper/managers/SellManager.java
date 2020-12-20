@@ -7,6 +7,7 @@ import cz.craftmania.craftkeeper.events.PlayerSellallEvent;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
 import cz.craftmania.craftkeeper.objects.SellPrices;
 import cz.craftmania.craftkeeper.utils.Logger;
+import cz.craftmania.craftkeeper.utils.Utils;
 import cz.wake.craftprison.objects.Rank;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -80,9 +81,9 @@ public class SellManager {
                 double moneyToAddWithoutEnhance = moneyToAdd;
                 moneyToAdd = Main.getMultiplierManager().enhanceSellValue(player, moneyToAdd);
 
-                String message = "§aProdal jsi materiál a bylo ti přidáno §e" + Math.round(moneyToAddWithoutEnhance) + "§6$";
+                String message = "§aProdal jsi materiál a bylo ti přidáno §e" + Utils.formatMoney(Math.round(moneyToAddWithoutEnhance)) + "§6$";
                 if ((int) moneyToAdd != (int) moneyToAddWithoutEnhance)
-                    message += "§a (§e+ " + Math.round(moneyToAdd - moneyToAddWithoutEnhance - 1) + "§6$§a)!";
+                    message += "§a (§e+ " + Utils.formatMoney(Math.round(moneyToAdd - moneyToAddWithoutEnhance - 1)) + "§6$§a)!";
                 else
                     message += "§a!";
                 Main.getVaultEconomy().depositPlayer(player, moneyToAdd);

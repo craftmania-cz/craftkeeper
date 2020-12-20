@@ -47,11 +47,11 @@ public class SellallGUI implements InventoryProvider {
             double enhancedPrice = price;
 
             List<String> description = new ArrayList<>();
-            description.add("§7Cena: §e" + price + "§6$");
+            description.add("§7Cena: §e" + Utils.formatMoney(price) + "§6$");
 
             if (hasPlayerMultipliers) {
                 enhancedPrice = Main.getMultiplierManager().enhanceSellValue(player, enhancedPrice);
-                description.add("§7Cena s MP: §e" + Math.round(enhancedPrice) + "§6$");
+                description.add("§7Cena s MP: §e" + Utils.formatMoney(Math.round(enhancedPrice)) + "§6$");
             }
 
             ItemStack item = createItem(material, "§e" + Utils.processBlockName(material.name()), description);
