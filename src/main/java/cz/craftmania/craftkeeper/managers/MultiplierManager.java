@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MultiplierManager {
 
@@ -64,7 +65,17 @@ public class MultiplierManager {
     }
 
     public void unloadMultipliersFromCache(Player player) {
-        multipliers.removeAll(getPersonalMultipliersByPlayer(player));
+        UUID playerUUID = player.getUniqueId(); //Jelikož #removeAll() neodstraňuje vše, z nějakého důvodu?
+        List<Multiplier> multipliersCopy = new ArrayList<>(multipliers);
+        int counter = 0;
+        for (Multiplier multiplier : multipliersCopy) {
+            if (multiplier.getTargetUUID().equals(playerUUID)) {
+                if (multiplier.getType() == MultiplierType.PERSONAL) {
+                    multipliers.remove(counter);
+                }
+            }
+            counter++;
+        }
     }
 
     // Getters
@@ -122,7 +133,7 @@ public class MultiplierManager {
     // Managers
 
     public void addMultiplier(Multiplier multiplier) {
-        Logger.debug("[MULTIPLIERS] Přidávání Multiplieru '" + multiplier.toString()+ "'...");
+        Logger.debug("[MULTIPLIERS] Přidávání Multiplieru '" + multiplier.toString() + "'...");
         Main.getSqlManager().createMultiplier(multiplier);
         multipliers.add(multiplier);
     }
