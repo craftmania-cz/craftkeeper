@@ -69,8 +69,8 @@ public class MultiplierManager {
         List<Multiplier> multipliersCopy = new ArrayList<>(multipliers);
         int counter = 0;
         for (Multiplier multiplier : multipliersCopy) {
-            if (multiplier.getTargetUUID().equals(playerUUID)) {
-                if (multiplier.getType() == MultiplierType.PERSONAL) {
+            if (multiplier.getType() == MultiplierType.PERSONAL) {
+                if (multiplier.getTargetUUID().equals(playerUUID)) {
                     multipliers.remove(counter);
                 }
             }
