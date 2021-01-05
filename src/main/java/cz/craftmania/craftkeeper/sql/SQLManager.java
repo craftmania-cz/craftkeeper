@@ -253,4 +253,30 @@ public class SQLManager {
             }
         }.runTaskAsynchronously(Main.getInstance());
     }
+
+    /**
+     * Will return selected player settings.
+     *
+     * @param p        Player object
+     * @param settings Settings name
+     * @return Selected settings value
+     */
+    public final int getSettings(final Player p, final String settings) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = pool.getConnection();
+            ps = conn.prepareStatement("SELECT " + settings + " FROM player_settings WHERE nick = '" + p.getName() + "'");
+            ps.executeQuery();
+            if (ps.getResultSet().next()) {
+                return ps.getResultSet().getInt(settings);
+            }
+        } catch (Exception e) {
+            cz.craftmania.crafteconomy.Main.getInstance().sendSentryException(e);
+            e.printStackTrace();
+        } finally {
+            pool.close(conn, ps, null);
+        }
+        return -1;
+    }
 }

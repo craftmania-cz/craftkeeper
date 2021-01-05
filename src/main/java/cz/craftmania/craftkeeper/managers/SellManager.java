@@ -58,17 +58,20 @@ public class SellManager {
                     }
                 }
 
-                Inventory backpackInventory = null;
-                Backpack bp = Main.getMinepacksPlugin().getBackpackCachedOnly(player);
-                if (bp != null) {
-                    backpackInventory = bp.getInventory();
-                    for (ItemStack itemInBackpack : backpackInventory.getContents()) {
-                        if (itemInBackpack == null)
-                            continue;
-                        if (sellPrices.getPrices().containsKey(itemInBackpack.getType())) {
-                            Double price = sellPrices.getPrices().get(itemInBackpack.getType());
-                            moneyToAdd += itemInBackpack.getAmount() * price;
-                            itemInBackpack.setAmount(0);
+                int sellBackpack = Main.getSqlManager().getSettings(player, "prison_sell_backpack");
+                if (sellBackpack == 1) {
+                    Inventory backpackInventory = null;
+                    Backpack bp = Main.getMinepacksPlugin().getBackpackCachedOnly(player);
+                    if (bp != null) {
+                        backpackInventory = bp.getInventory();
+                        for (ItemStack itemInBackpack : backpackInventory.getContents()) {
+                            if (itemInBackpack == null)
+                                continue;
+                            if (sellPrices.getPrices().containsKey(itemInBackpack.getType())) {
+                                Double price = sellPrices.getPrices().get(itemInBackpack.getType());
+                                moneyToAdd += itemInBackpack.getAmount() * price;
+                                itemInBackpack.setAmount(0);
+                            }
                         }
                     }
                 }
