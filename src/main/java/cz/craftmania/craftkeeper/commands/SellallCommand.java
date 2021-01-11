@@ -62,6 +62,24 @@ public class SellallCommand extends BaseCommand {
             Logger.danger("Konzole nic neprodá.");
     }
 
+    @Subcommand("mine")
+    @CommandAlias("sam")
+    @CommandCompletion("[Mine]")
+    @CommandPermission("craftkeeper.custommines")
+    public void sellAllCustomMine(CommandSender sender, String mineName) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            KeeperPlayer keeperPlayer = Main.getKeeperManager().getKeeperPlayer(player);
+            if (keeperPlayer == null) {
+                ChatInfo.error(player, "Nastala chyba při získávání tvých dat. Prosím, odpoj se a připoj. Pokud tento problém bude přetrvávat, napiš nám na Disocrd -> #bugy_a_problemy");
+                return;
+            }
+            keeperPlayer.refreshPlayerRank();
+            Main.getSellManager().sellEverythingByMineName(keeperPlayer, mineName);
+        } else
+            Logger.danger("Konzole nic neprodá.");
+    }
+
     @Subcommand("reload")
     @CommandAlias("sr")
     @CommandPermission("craftkeeper.reloadprices")
