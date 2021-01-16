@@ -38,7 +38,7 @@ public class Multiplier {
     public String getRemainingTimeReadable() {
         long ms = remainingLength;
         int minutes = (int) ((ms / (1000 * 60)) % 60);
-        int hours = (int) ((ms / (1000 * 60 * 60)) % 24);
+        int hours = (int) ms / (1000 * 60 * 60);
 
         if (hours == 0 && minutes == 0)
             return "<1m";
