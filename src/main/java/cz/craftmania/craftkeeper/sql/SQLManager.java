@@ -266,13 +266,13 @@ public class SQLManager {
         PreparedStatement ps = null;
         try {
             conn = pool.getConnection();
-            ps = conn.prepareStatement("SELECT " + settings + " FROM player_settings WHERE nick = '" + p.getName() + "'");
+            ps = conn.prepareStatement("SELECT " + settings + " FROM minigames.player_settings WHERE nick = '" + p.getName() + "'");
             ps.executeQuery();
             if (ps.getResultSet().next()) {
                 return ps.getResultSet().getInt(settings);
             }
         } catch (Exception e) {
-            cz.craftmania.crafteconomy.Main.getInstance().sendSentryException(e);
+            Main.getInstance().sendSentryException(e);
             e.printStackTrace();
         } finally {
             pool.close(conn, ps, null);
