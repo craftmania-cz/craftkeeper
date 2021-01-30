@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.*;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
+import cz.craftmania.craftkeeper.objects.SellPricesCustom;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.wake.craftprison.objects.Rank;
 import org.bukkit.command.CommandSender;
@@ -65,10 +66,22 @@ public class SellallCommand extends BaseCommand {
     @Subcommand("mine")
     @CommandAlias("sam")
     @CommandCompletion("[Mine]")
-    @CommandPermission("craftkeeper.custommines")
     public void sellAllCustomMine(CommandSender sender, String mineName) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
+
+            SellPricesCustom sellPrices = Main.getSellManager().getSellPricesByMineName(mineName);
+
+            if (sellPrices == null) {
+                ChatInfo.error(player, "Zadal jsi neplatné jméno dolu!");
+                return;
+            }
+
+            if (!player.hasPermission("craftkeeper.mine." + mineName)) {
+                ChatInfo.error(player, "Nemáš právo prodávat na tomto dole!");
+                return;
+            }
+
             KeeperPlayer keeperPlayer = Main.getKeeperManager().getKeeperPlayer(player);
             if (keeperPlayer == null) {
                 ChatInfo.error(player, "Nastala chyba při získávání tvých dat. Prosím, odpoj se a připoj. Pokud tento problém bude přetrvávat, napiš nám na Disocrd -> #bugy_a_problemy");

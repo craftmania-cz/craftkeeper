@@ -7,8 +7,10 @@ import cz.craftmania.craftcore.spigot.inventory.builder.SmartInventory;
 import cz.craftmania.craftcore.spigot.messages.chat.ChatInfo;
 import cz.craftmania.craftkeeper.Main;
 import cz.craftmania.craftkeeper.events.PlayerSellallInventoryOpenEvent;
+import cz.craftmania.craftkeeper.menu.SellallCustomGUI;
 import cz.craftmania.craftkeeper.menu.SellallGUI;
 import cz.craftmania.craftkeeper.objects.KeeperPlayer;
+import cz.craftmania.craftkeeper.objects.SellPricesCustom;
 import cz.craftmania.craftkeeper.utils.Logger;
 import cz.wake.craftprison.objects.Rank;
 import org.bukkit.Bukkit;
@@ -49,7 +51,7 @@ public class KeeperCommand extends BaseCommand {
     }
 
     @Subcommand("mine")
-    @Syntax("[mine]")
+    @Syntax("[rank]")
     public void showInventoryByRankName(CommandSender sender, String rankName) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -66,6 +68,27 @@ public class KeeperCommand extends BaseCommand {
             SmartInventory.builder().size(6, 9).title("Výkupní seznam - Rank " + rank.getName()).provider(new SellallGUI(rank)).build().open(player);
             Bukkit.getPluginManager().callEvent(new PlayerSellallInventoryOpenEvent(keeperPlayer));
 
+        } else
+            Logger.danger("Konzole si inventář neotevře.");
+    }
+
+    @Subcommand("mine custom")
+    @CommandAlias("keepercustom")
+    @Syntax("[mine]")
+    public void showInventoryByMineName(CommandSender sender, String mineName) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            KeeperPlayer keeperPlayer = Main.getKeeperManager().getKeeperPlayer(player);
+
+            SellPricesCustom sellPricesCustom = Main.getSellManager().getSellPricesByMineName(mineName);
+            if (sellPricesCustom == null) {
+                ChatInfo.error(player, "Zadal jsi neplatné jméno dolu!");
+                return;
+            }
+
+            SmartInventory.builder().size(6, 9).title("Výkupní seznam - Mine " + sellPricesCustom.getMineName()).provider(new SellallCustomGUI(sellPricesCustom)).build().open(player);
+            Bukkit.getPluginManager().callEvent(new PlayerSellallInventoryOpenEvent(keeperPlayer));
         } else
             Logger.danger("Konzole si inventář neotevře.");
     }
