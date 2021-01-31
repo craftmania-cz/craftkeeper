@@ -80,10 +80,16 @@ public class KeeperCommand extends BaseCommand {
             Player player = (Player) sender;
 
             KeeperPlayer keeperPlayer = Main.getKeeperManager().getKeeperPlayer(player);
+            keeperPlayer.refreshPlayerRank();
 
             SellPricesCustom sellPricesCustom = Main.getSellManager().getSellPricesByMineName(mineName);
             if (sellPricesCustom == null) {
                 ChatInfo.error(player, "Zadal jsi neplatné jméno dolu!");
+                return;
+            }
+
+            if (keeperPlayer.getPlayerRank() != Rank.Z) {
+                ChatInfo.error(player, "Nemůžeš zde prodávat, nemáš rank Z!");
                 return;
             }
 
