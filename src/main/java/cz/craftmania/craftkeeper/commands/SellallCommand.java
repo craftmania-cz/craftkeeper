@@ -88,6 +88,12 @@ public class SellallCommand extends BaseCommand {
                 return;
             }
             keeperPlayer.refreshPlayerRank();
+
+            if (keeperPlayer.getPlayerRank() != Rank.Z) {
+                ChatInfo.error(player, "Nemůžeš zde prodávat, nemáš rank Z!");
+                return;
+            }
+
             Main.getSellManager().sellEverythingByMineName(keeperPlayer, mineName);
         } else
             Logger.danger("Konzole nic neprodá.");

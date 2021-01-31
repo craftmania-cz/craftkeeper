@@ -88,11 +88,6 @@ public class KeeperCommand extends BaseCommand {
                 return;
             }
 
-            if (keeperPlayer.getPlayerRank() != Rank.Z) {
-                ChatInfo.error(player, "Nemůžeš zde prodávat, nemáš rank Z!");
-                return;
-            }
-
             SmartInventory.builder().size(6, 9).title("Výkupní seznam - Mine " + sellPricesCustom.getMineName()).provider(new SellallCustomGUI(sellPricesCustom)).build().open(player);
             Bukkit.getPluginManager().callEvent(new PlayerSellallInventoryOpenEvent(keeperPlayer));
         } else
