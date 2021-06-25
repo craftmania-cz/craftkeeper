@@ -115,10 +115,11 @@ public class Main extends JavaPlugin {
 
         Logger.info("Získávám si Minepacks API!");
         Plugin bukkitPlugin = Bukkit.getPluginManager().getPlugin("Minepacks");
-        if (!(bukkitPlugin instanceof MinepacksPlugin)) {
+        if (bukkitPlugin instanceof MinepacksPlugin) { //TODO: Po airplane přidání nefunguje?
+            minepacksPlugin = (MinepacksPlugin) bukkitPlugin;
+        } else {
             Logger.danger("Minepacks není načteno!");
         }
-        minepacksPlugin = (MinepacksPlugin) bukkitPlugin;
 
         // PlaceholderAPI
         Logger.info("Registruji PlaceholderAPI CraftRoleplay extension!");
